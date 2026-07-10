@@ -1,0 +1,464 @@
+import { useState, useEffect } from "react";
+import { Ticket, SystemLog } from "./types";
+import { INITIAL_TICKETS } from "./data";
+import HistoryDashboard from "./components/HistoryDashboard";
+import TicketForm from "./components/TicketForm";
+import TicketDetailView from "./components/TicketDetailView";
+import PriceBookView from "./components/PriceBookView";
+
+import { 
+  Building2, 
+  Terminal, 
+  Database,
+  Info,
+  Workflow
+} from "lucide-react";
+
+export default function App() {
+  // Role switcher: 'hand' (Field Hand), 'supervisor' (Dan Sullivan), 'companyman' (Client Rep / Company Man)
+  const [activeRole, setActiveRole] = useState<string>("hand");
+  const [logoClicks, setLogoClicks] = useState<number>(0);
+  const [showRoleSwitcher, setShowRoleSwitcher] = useState<boolean>(false);
+  const [isSupervisorToggleVisible, setIsSupervisorToggleVisible] = useState<boolean>(true);
+  
+  // Realized state arrays loaded from LocalStorage or code initializers
+  const [tickets, setTickets] = useState<Ticket[]>(() => {
+    const saved = localStorage.getItem("crude_hr_tickets");
+    return saved ? JSON.parse(saved) : INITIAL_TICKETS;
+  });
+
+  // Current ticket interaction state pointers
+  const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+
+  // Simulated live event logger for showing background integrations (Invoicing & Ticket splits)
+  const [systemLogs, setSystemLogs] = useState<SystemLog[]>([
+    {
+      id: "log-1",
+      timestamp: new Date().toLocaleTimeString(),
+      message: "Crude HR transaction database engine initialized securely on Permian Basin local client node.",
+      type: "system"
+    },
+    {
+      id: "log-2",
+      timestamp: new Date().toLocaleTimeString(),
+      message: "Mapped Table1 Price Book with contract rate schedule. Filters locked.",
+      type: "info"
+    },
+    {
+      id: "log-3",
+      timestamp: new Date().toLocaleTimeString(),
+      message: "Operational live tracking field ticket modules primed for dispatch.",
+      type: "success"
+    }
+  ]);
+
+  // Save changes to cache
+  useEffect(() => {
+    localStorage.setItem("crude_hr_tickets", JSON.stringify(tickets));
+  }, [tickets]);
+
+  // Keep detail view updated if tickets state array shifts
+  useEffect(() => {
+    if (selectedTicket) {
+      const match = tickets.find((t) => t.id === selectedTicket.id);
+      if (match) setSelectedTicket(match);
+    }
+  }, [tickets]);
+
+  // Scroll to top of viewport on view transitions
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [isEditing, selectedTicket]);
+
+  const appendSystemLog = (message: string, type: SystemLog["type"] = "info") => {
+    const newLog: SystemLog = {
+      id: `log-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+      timestamp: new Date().toLocaleTimeString(),
+      message,
+      type
+    };
+    setSystemLogs((prev) => [newLog, ...prev.slice(0, 18)]);
+  };
+
+  const handleResetDatabase = () => {
+    if (window.confirm("Restore Crude HR tracking dashboard to default tickets?")) {
+      setTickets(INITIAL_TICKETS);
+      setSelectedTicket(null);
+      setIsEditing(false);
+      appendSystemLog("Initiated database factory reset. Historical registers repopulated.", "warning");
+    }
+  };
+
+  // Field Hand actions
+  const handleSaveDraft = (draftTicket: Ticket) => {
+    // Check if updating existing
+    const exists = tickets.some((t) => t.id === draftTicket.id);
+    if (exists) {
+      setTickets((prev) => prev.map((t) => (t.id === draftTicket.id ? draftTicket : t)));
+      appendSystemLog(`Draft ticket updated: #${draftTicket.ticketNumber}. Cache synced.`, "info");
+    } else {
+      setTickets((prev) => [draftTicket, ...prev]);
+      appendSystemLog(`New Draft ticket logged successfully: #${draftTicket.ticketNumber}.`, "success");
+    }
+    setIsEditing(false);
+    setSelectedTicket(null);
+  };
+
+  const handleSubmitForReview = (submittedTicket: Ticket) => {
+    // Shifts status to Pending Review
+    const exists = tickets.some((t) => t.id === submittedTicket.id);
+    let updatedList: Ticket[];
+    
+    if (exists) {
+      updatedList = tickets.map((t) => (t.id === submittedTicket.id ? submittedTicket : t));
+    } else {
+      updatedList = [submittedTicket, ...tickets];
+    }
+    
+    setTickets(updatedList);
+    setIsEditing(false);
+    setSelectedTicket(submittedTicket); // Show review worksheet
+    
+    appendSystemLog(
+      `Workflow Shift! Ticket #${submittedTicket.ticketNumber} signed by '${submittedTicket.clientRepresentative}' and dispatched to supervisor gate.`,
+      "success"
+    );
+  };
+
+  // Supervisor actions (Dan Sullivan)
+  const handleApproveTicket = (ticketId: string) => {
+    const target = tickets.find((t) => t.id === ticketId);
+    if (!target) return;
+
+    const aggregateTotal = target.lineItems.reduce((sum, item) => sum + item.total, 0);
+    const wagePortion = parseFloat((target.hoursWorked * 35.0 + aggregateTotal * 0.05).toFixed(2));
+
+    setTickets((prev) =>
+      prev.map((t) =>
+        t.id === ticketId
+          ? {
+              ...t,
+              status: "Approved",
+              approvedAt: new Date().toISOString(),
+              payrollAmount: wagePortion,
+              billingAmount: aggregateTotal
+            }
+          : t
+      )
+    );
+    
+     // Step 6 Trigger (Simulate patching data & splitting to invoicing and ticket ledger ERP triggers)
+    setTimeout(() => {
+      appendSystemLog(
+        `ERP PIPELINE SPLIT: Generated Client Invoice for ${target.clientName} [Amount: $${aggregateTotal.toLocaleString(undefined, {minimumFractionDigits:2})}]. Dispatching via secure billing release API.`,
+        "system"
+      );
+    }, 600);
+
+    setTimeout(() => {
+      appendSystemLog(
+        `TICKET LEDGER RELEASE Dispatched: Field Hand ticket credit processed [Earned Wages: $${wagePortion.toFixed(2)}]. Live tracking ledger balanced.`,
+        "success"
+      );
+    }, 1200);
+  };
+
+  const handleRejectTicket = (ticketId: string, notes: string) => {
+    const target = tickets.find((t) => t.id === ticketId);
+    if (!target) return;
+
+    setTickets((prev) =>
+      prev.map((t) =>
+        t.id === ticketId
+          ? {
+              ...t,
+              status: "Rejected",
+              correctionNotes: notes
+            }
+          : t
+      )
+    );
+
+    appendSystemLog(
+      `QUALITY GATE REJECTED: Ticket #${target.ticketNumber} returned as Draft to user. Note: "${notes}"`,
+      "warning"
+    );
+  };
+
+  // Trigger editing workspace
+  const handleEditDraftTicket = (ticketToEdit: Ticket) => {
+    setIsEditing(true);
+    setSelectedTicket(ticketToEdit);
+    appendSystemLog(`Locked into edits: Drafting Workspace for #${ticketToEdit.ticketNumber}`, "info");
+  };
+
+  return (
+    <div className="min-h-screen bg-zinc-950 font-sans text-zinc-100 selection:bg-amber-500 selection:text-black">
+      
+      {/* ENTERPRISE TOP NAVIGATION BRAND HEADER */}
+      <header className="border-b border-zinc-805 bg-zinc-900/60 sticky top-0 z-50 backdrop-blur-md px-6 py-4 shadow-xl shadow-black/80">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
+          
+          {/* Logo brand styling from Design template */}
+          <div className="flex items-center gap-4">
+            <div 
+              onClick={() => {
+                if (logoClicks < 3) {
+                  const nextClicks = logoClicks + 1;
+                  setLogoClicks(nextClicks);
+                  if (nextClicks === 3) {
+                    setShowRoleSwitcher(true);
+                    appendSystemLog("Secret Console Enabled: Operations Role Bar Revealed!", "success");
+                  }
+                } else {
+                  const nextVis = !showRoleSwitcher;
+                  setShowRoleSwitcher(nextVis);
+                  appendSystemLog(nextVis ? "Operations Role Bar Revealed." : "Operations Role Bar Hidden.", "info");
+                }
+              }}
+              className="bg-amber-500 text-black px-2.5 py-1 font-black italic rounded text-sm tracking-tight shadow-[0_0_12px_rgba(245,158,11,0.2)] cursor-pointer select-none active:scale-95 transition-all hover:bg-amber-400"
+              title="Click 3 times to reveal role/toggle switcher bar"
+            >
+              CRUDE HR
+            </div>
+            <div className="h-4 w-px bg-zinc-700"></div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-bold tracking-tight text-zinc-300">OPERATIONS CONTROL</span>
+                <span className="text-[9px] bg-zinc-850 text-zinc-400 font-mono px-1.5 py-0.5 rounded border border-zinc-800 uppercase tracking-widest">
+                  Secure Field Ticket Workflow
+                </span>
+              </div>
+              <p className="text-[9px] text-zinc-500 font-mono uppercase tracking-wider">
+                Oilfield Workflows &amp; Automated Ledger Systems
+              </p>
+            </div>
+          </div>
+
+          {/* CONTROL PANEL: EMULATE ACTIVE WORKSPACE ROLE FOR EVALUATOR */}
+          <div className={`${showRoleSwitcher ? "flex" : "hidden"} bg-zinc-950/80 border border-zinc-800 px-3.5 py-2 rounded-2xl flex-col md:flex-row md:items-center gap-2.5 transition-all duration-300`}>
+            <span className="text-[11px] font-mono font-bold text-zinc-400 uppercase tracking-widest flex items-center gap-1.5">
+              <Workflow size={13} className="text-amber-500" />
+              Active Role:
+            </span>
+            <div className="flex flex-wrap gap-1 bg-zinc-900 p-0.5 rounded-lg border border-zinc-800/80">
+              {[
+                { id: "hand", label: "Field Hand (Job log)", note: "Drafts digital tickets" },
+                { id: "supervisor", label: "Supervisor Gate", note: "Approves / Rejects" }
+              ].map((role) => (
+                <button
+                  id={`role-toggle-${role.id}`}
+                  key={role.id}
+                  onClick={() => {
+                    setActiveRole(role.id);
+                    appendSystemLog(`Emulating interface view as ${role.label.substring(4)}`, "info");
+                  }}
+                  className={`px-3 py-1.5 rounded text-[11px] font-bold uppercase tracking-tight transition-all cursor-pointer ${
+                    activeRole === role.id
+                      ? "bg-amber-500 text-black shadow-[0_0_8px_rgba(245,158,11,0.3)] font-bold"
+                      : "text-zinc-500 hover:text-zinc-350"
+                  }`}
+                  title={role.note}
+                >
+                  {role.label.split(" ")[1]} {role.label.split(" ")[2] || ""}
+                </button>
+              ))}
+            </div>
+
+            {/* GPS ACTIVE beacon decoration */}
+            <div className="hidden xl:flex items-center gap-2 px-3 py-1.5 bg-zinc-900 rounded-lg border border-zinc-800 select-none">
+              <div className="w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)] animate-pulse"></div>
+              <span className="text-[9px] font-mono uppercase tracking-widest text-zinc-400">GPS Active</span>
+            </div>
+          </div>
+
+        </div>
+      </header>
+
+      {/* ROLE ADVISORY INFO BAR */}
+      {showRoleSwitcher && (
+        <div className="bg-zinc-900 border-b border-zinc-850 py-2.5 px-4 transition-all duration-300">
+          <div className="max-w-7xl mx-auto flex items-center gap-2 text-xs text-zinc-450 font-normal font-sans">
+            <Info size={14} className="text-amber-500 flex-shrink-0" />
+            {activeRole === "hand" && (
+              <span>
+                <strong>Field Hand Dashboard:</strong> Create digital tickets, verify Safety, capture GPS, map contract rates from <strong>Table1 Pricing chips</strong>, and have the Co. Man review &amp; digitally sign off on your phone right here before submission.
+              </span>
+            )}
+            {activeRole === "supervisor" && (
+              <span>
+                <strong>Supervisor Gate Endorsement Mode:</strong> Dan Sullivan can visually analyze operational safety, tally lengths, and sign-offs to either dispatch payments to ticket accounts or reject.
+              </span>
+            )}
+          </div>
+        </div>
+      )}
+
+      <main className="max-w-4xl mx-auto px-4 py-6">
+        {/* RESPONSIBLE SINGLE-COLUMN WIZARD LAYOUT */}
+        <div className="flex flex-col gap-6">
+
+          {/* DISMISSIBLE / HIDDEN SUPERVISOR PORTAL QUICK-TOGGLE */}
+          {isSupervisorToggleVisible ? (
+            <div className="bg-gradient-to-r from-zinc-900 via-zinc-950 to-zinc-900 border border-zinc-800 rounded-2xl p-4 flex flex-col md:flex-row items-center justify-between gap-4 shadow-xl animate-fadeIn">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-blue-500/10 text-blue-400 rounded-xl border border-blue-500/20">
+                  <Workflow size={18} className="animate-hoverPulse" />
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-350 flex items-center gap-2">
+                    Operational Access Hub
+                    <span className="bg-blue-500/10 text-blue-400 text-[8px] font-mono font-extrabold px-1.5 py-0.5 rounded border border-blue-500/20 uppercase tracking-widest">
+                      Quick Link
+                    </span>
+                  </h4>
+                  <p className="text-[11px] text-zinc-500 mt-0.5 max-w-md">
+                    Enable Supervisor Portal instantly to endorse pending tickets or inspect full team logs. Hide this control bar anytime.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3 w-full md:w-auto justify-between md:justify-end">
+                <div className="flex items-center gap-2 bg-zinc-950 p-1.5 rounded-xl border border-zinc-855">
+                  <button
+                    id="toggle-fieldhand-mode"
+                    onClick={() => {
+                      setActiveRole("hand");
+                      appendSystemLog("Switched Active View to Field Hand dashboard", "info");
+                    }}
+                    className={`px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition cursor-pointer ${
+                      activeRole === "hand"
+                        ? "bg-amber-500 text-black shadow-md font-extrabold"
+                        : "text-zinc-500 hover:text-zinc-350"
+                    }`}
+                  >
+                    Field Hand
+                  </button>
+                  <button
+                    id="toggle-supervisor-mode"
+                    onClick={() => {
+                      setActiveRole("supervisor");
+                      setSelectedTicket(null);
+                      setIsEditing(false);
+                      appendSystemLog("Switched Active View to Supervisor Gate", "success");
+                    }}
+                    className={`px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition cursor-pointer ${
+                      activeRole === "supervisor"
+                        ? "bg-blue-500 text-white shadow-md font-extrabold"
+                        : "text-zinc-500 hover:text-zinc-350"
+                    }`}
+                  >
+                    Supervisor
+                  </button>
+                </div>
+
+                <button
+                  id="hide-supervisor-portal-bar"
+                  onClick={() => {
+                    setIsSupervisorToggleVisible(false);
+                    appendSystemLog("Supervisor Control bar dismissed. Toggle restored keys in bottom drawer.", "warning");
+                  }}
+                  className="text-zinc-500 hover:text-rose-450 px-2 py-1.5 bg-zinc-950 rounded-lg border border-zinc-850 hover:border-rose-900/40 transition cursor-pointer"
+                  title="Hide this Switcher Panel"
+                >
+                  <span className="text-[10px] font-mono">✕ Hide</span>
+                </button>
+              </div>
+            </div>
+          ) : (
+            /* Subtle Restore Hook so they can easily bring it back if hidden */
+            <div className="flex justify-end -mb-4">
+              <button
+                id="restore-supervisor-portal-btn"
+                onClick={() => {
+                  setIsSupervisorToggleVisible(true);
+                  appendSystemLog("Supervisor Access Hub restored.", "info");
+                }}
+                className="text-[9px] bg-zinc-900/60 hover:bg-zinc-900 text-zinc-500 hover:text-zinc-300 px-3 py-1.5 rounded-full border border-zinc-800 flex items-center gap-1.5 transition cursor-pointer shadow-sm"
+              >
+                <Workflow size={10} className="text-blue-500 animate-pulse" />
+                Show Supervisor Hub Switcher
+              </button>
+            </div>
+          )}
+
+          {/* MAIN CONTAINER: THE ACTIVE MOBILE PHONE VIEW OR WIZARD VIEW */}
+          <section className="w-full flex flex-col gap-4">
+            
+            <div className="bg-zinc-900 border border-zinc-850 rounded-2xl overflow-hidden shadow-2xl relative">
+              {/* Phone Head Decorator (Technical Precision Feel) */}
+              <div className="bg-zinc-950 border-b border-zinc-850 px-6 py-2.5 flex items-center justify-between text-[10px] text-zinc-500 font-mono">
+                <span className="flex items-center gap-1">
+                  <Database size={10} className="text-zinc-500" />
+                  CRUDE_HR_API: SECURE_LOCAL_TUNNEL
+                </span>
+                <div className="w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)] animate-pulse" />
+              </div>
+
+              <div className="p-4 md:p-6 min-h-[580px]">
+                
+                {/* 1. TICKET ENTRY FORM */}
+                {isEditing ? (
+                  <TicketForm
+                    initialTicket={selectedTicket}
+                    onSaveDraft={handleSaveDraft}
+                    onSubmitForReview={handleSubmitForReview}
+                    onCancel={() => {
+                      setIsEditing(false);
+                      setSelectedTicket(null);
+                      appendSystemLog("Exited Drafting Workspace safely. Settings restored.", "warning");
+                    }}
+                  />
+                ) : selectedTicket ? (
+                  /* 2. TICKET DETAIL SUMMARY & GATE CONTROLS */
+                  <TicketDetailView
+                    ticket={selectedTicket}
+                    activeRole={activeRole}
+                    onApprove={handleApproveTicket}
+                    onReject={handleRejectTicket}
+                    onEditDraft={handleEditDraftTicket}
+                    onClose={() => {
+                      setSelectedTicket(null);
+                      appendSystemLog("Exited detailed worksheet review.", "info");
+                    }}
+                  />
+                ) : (
+                  /* 3. SEARCHABLE LIVE PIPELINE TRACKING DASHBOARD */
+                  <HistoryDashboard
+                    tickets={tickets}
+                    activeRole={activeRole}
+                    onSelectTicket={(ticket) => {
+                      setSelectedTicket(ticket);
+                      appendSystemLog(`Inspecting Ticket Worksheet: #${ticket.ticketNumber}`, "info");
+                    }}
+                    onCreateNewTicket={() => {
+                      setIsEditing(true);
+                      setSelectedTicket(null);
+                      appendSystemLog("Initiated fresh new Digital Field Ticket sequence.", "info");
+                    }}
+                    onResetDatabase={handleResetDatabase}
+                    onApproveTicket={handleApproveTicket}
+                    onRejectTicket={handleRejectTicket}
+                  />
+                )}
+                
+              </div>
+            </div>
+          </section>
+
+        </div>
+      </main>
+
+      {/* Consistent System Footer decor matching the visual theme */}
+      <footer className="h-8 bg-zinc-950 flex items-center justify-between px-6 border-t border-zinc-900 text-[9px] text-zinc-600 font-mono tracking-widest mt-12 lowercase select-none">
+        <div className="flex gap-4">
+          <span>status: <span className="text-green-500 font-bold">system active</span></span>
+          <span>sync: <span>up-to-date</span></span>
+        </div>
+        <div>secure client ledger workflow</div>
+      </footer>
+
+    </div>
+  );
+}

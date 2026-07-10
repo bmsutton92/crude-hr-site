@@ -1,0 +1,171 @@
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-navy: #0C1017;
+  --color-charcoal: #171B22;
+  --color-steel: #2A2F3A;
+  --color-edge: #333A47;
+  --color-body: #F2F4F7;
+  --color-muted: #9AA3B2;
+  --color-accent: #C96A3B;
+  --color-accent-hover: #DB7E4E;
+  --color-accent-deep: #A9541F;
+  --color-signal: #4C9BE8;
+
+  /* The embedded field ticketing demo was authored with amber/yellow accents.
+     Remap those shades to the brand orange so no yellow or gold renders anywhere. */
+  --color-amber-400: #DB7E4E;
+  --color-amber-500: #C96A3B;
+  --color-amber-600: #A9541F;
+  --color-yellow-500: #C96A3B;
+
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-display: "Barlow Condensed", "Inter", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-navy text-body font-sans antialiased;
+}
+
+::selection {
+  background: rgba(201, 106, 59, 0.35);
+}
+
+/* Muted orange-to-black gradient treatments */
+.btn-accent {
+  background-image: linear-gradient(180deg, #d0743f 0%, #b95a2b 55%, #a9541f 100%);
+  border: 1px solid rgba(219, 126, 78, 0.55);
+  transition: filter 0.2s ease;
+}
+.btn-accent:hover {
+  filter: brightness(1.12);
+}
+.text-gradient-accent {
+  background-image: linear-gradient(100deg, #db7e4e 0%, #c96a3b 55%, #a9541f 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.hero-glow {
+  background:
+    radial-gradient(ellipse 70% 55% at 15% 100%, rgba(169, 84, 31, 0.28), transparent 65%),
+    radial-gradient(ellipse 50% 40% at 90% 0%, rgba(201, 106, 59, 0.10), transparent 60%),
+    linear-gradient(180deg, #0C1017 0%, #10131b 100%);
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0C1017;
+}
+::-webkit-scrollbar-thumb {
+  background: #2A2F3A;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #333A47;
+}
+
+/* Scroll reveal */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Workflow diagram connector draw-in */
+.wf-line {
+  stroke-dasharray: var(--wf-len, 400);
+  stroke-dashoffset: var(--wf-len, 400);
+}
+.wf-animate .wf-line {
+  animation: wf-draw 1.2s ease forwards;
+}
+.wf-node {
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+.wf-animate .wf-node {
+  opacity: 1;
+}
+@keyframes wf-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+.wf-pulse {
+  opacity: 0;
+}
+.wf-animate .wf-pulse {
+  opacity: 1;
+  animation: wf-pulse-move 3s linear 1.4s infinite;
+}
+@keyframes wf-pulse-move {
+  0% { offset-distance: 0%; opacity: 0; }
+  8% { opacity: 1; }
+  92% { opacity: 1; }
+  100% { offset-distance: 100%; opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .wf-line {
+    stroke-dasharray: none;
+    stroke-dashoffset: 0;
+    animation: none !important;
+  }
+  .wf-node {
+    opacity: 1;
+  }
+  .wf-pulse,
+  .wf-animate .wf-pulse {
+    animation: none !important;
+    opacity: 0;
+  }
+}
+
+/* Blog post typography */
+.prose-crude h2 {
+  @apply font-display text-2xl font-semibold uppercase tracking-wide text-body mt-10 mb-4;
+}
+.prose-crude h3 {
+  @apply font-display text-xl font-semibold text-body mt-8 mb-3;
+}
+.prose-crude p {
+  @apply text-muted leading-relaxed mb-5;
+}
+.prose-crude ul,
+.prose-crude ol {
+  @apply text-muted leading-relaxed mb-5 pl-6 space-y-2;
+}
+.prose-crude ul {
+  list-style-type: square;
+}
+.prose-crude ol {
+  list-style-type: decimal;
+}
+.prose-crude strong {
+  @apply text-body font-semibold;
+}
+.prose-crude a {
+  @apply text-signal underline underline-offset-4;
+}
