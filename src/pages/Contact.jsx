@@ -42,7 +42,7 @@ export default function Contact() {
             </h1>
             <p className="mt-4 max-w-2xl text-lg text-muted">
               A workflow review is thirty minutes, free, and specific. No slide deck, no discovery
-              questionnaire, just your process on the table. Send the details below and we'll reach
+              questionnaire, just your process on the table. Send the details below and I'll reach
               out within one business day to set a time.
             </p>
             <a
@@ -52,7 +52,7 @@ export default function Contact() {
               Request Your Review <ArrowDown size={15} />
             </a>
             <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted">
-              Bring one manual process, spreadsheet, approval chain, or paper workflow. We'll
+              Bring one manual process, spreadsheet, approval chain, or paper workflow. I'll
               review where it breaks down, what can be simplified, and whether automation or a
               custom app makes sense.
             </p>
@@ -88,7 +88,7 @@ export default function Contact() {
                   </h2>
                 </div>
                 <p className="mt-3 text-sm leading-relaxed text-muted">
-                  We walk through your one process step by step: where it starts, who touches it,
+                  I walk through your one process step by step: where it starts, who touches it,
                   where it stalls, and what it feeds. You leave knowing which steps to cut, whether
                   automation or a custom app makes sense, and roughly what a fix would involve.
                   If the honest answer is "do not automate this," that is what you will hear.
@@ -106,17 +106,17 @@ export default function Contact() {
               <div className="flex items-center gap-3">
                 <CalendarClock size={20} className="text-accent" />
                 <h2 className="font-display text-2xl font-bold uppercase tracking-tight">
-                  Tell us about the process
+                  Tell me about the process
                 </h2>
               </div>
               <p className="mt-3 text-sm text-muted">
-                Share the one process you want reviewed and we'll come to the call prepared. We
+                Share the one process you want reviewed and I'll come to the call prepared. I
                 reply within one business day.
               </p>
 
               {status === 'done' ? (
                 <p className="mt-6 font-mono text-sm text-signal">
-                  Got it. We'll be in touch within one business day.
+                  Got it. I'll be in touch within one business day.
                 </p>
               ) : (
                 <form

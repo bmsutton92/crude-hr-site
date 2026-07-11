@@ -106,7 +106,7 @@ export default function Home() {
               </Link>
             </div>
             <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted">
-              Bring one manual process, spreadsheet, approval chain, or paper workflow. We'll
+              Bring one manual process, spreadsheet, approval chain, or paper workflow. I'll
               review where it breaks down, what can be simplified, and whether automation or a
               custom app makes sense.
             </p>
@@ -172,7 +172,7 @@ export default function Home() {
         <div className="mx-auto max-w-6xl px-5">
           <Reveal>
             <div className="font-mono text-xs uppercase tracking-widest text-accent">
-              What We Do
+              What I Do
             </div>
             <h2 className="mt-3 font-display text-3xl font-bold uppercase leading-tight tracking-tight sm:text-4xl">
               Three ways to get the paper out of the process
@@ -221,7 +221,7 @@ export default function Home() {
               From the wellsite to the balance sheet, one flow
             </h2>
             <p className="mt-4 max-w-2xl text-muted">
-              This is the pipeline we build most often. Capture the work where it happens, route
+              This is the pipeline I build most often. Capture the work where it happens, route
               the approval automatically, and let one clean record feed payroll and billing.
             </p>
           </Reveal>
@@ -248,7 +248,7 @@ export default function Home() {
               Workflow examples and build concepts
             </h2>
             <p className="mt-4 max-w-2xl text-muted">
-              Honest framing: these are the workflows we build and the scenarios we see most, shown
+              Honest framing: these are the workflows I build and the scenarios I see most, shown
               as capability rather than client history.
             </p>
           </Reveal>

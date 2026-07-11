@@ -22,13 +22,12 @@ export default function Footer() {
               <li><Link to="/demo" className="text-body hover:text-accent">Live Demo</Link></li>
               <li><Link to="/blog" className="text-body hover:text-accent">Blog</Link></li>
               <li><Link to="/about" className="text-body hover:text-accent">About</Link></li>
-              <li><Link to="/guide" className="text-body hover:text-accent">Design Guide</Link></li>
             </ul>
           </div>
           <div>
             <h3 className="font-mono text-xs uppercase tracking-widest text-muted">Get Started</h3>
             <p className="mt-3 text-sm leading-relaxed text-muted">
-              Bring one manual process. We will show you where it breaks down and what to do about
+              Bring one manual process. I will show you where it breaks down and what to do about
               it.
             </p>
             <Link

@@ -9,7 +9,7 @@ const groups = [
       {
         icon: Workflow,
         title: 'Workflow Automation',
-        what: 'We map a manual process end to end, cut the steps that earn nothing, and automate the rest with whatever platform fits: n8n, Power Automate, Make, or plain integrations.',
+        what: 'I map a manual process end to end, cut the steps that earn nothing, and automate the rest with whatever platform fits: n8n, Power Automate, Make, or plain integrations.',
         outcome: 'Admin hours drop and the process stops depending on who is in the office.',
       },
       {
@@ -81,7 +81,7 @@ export default function Services() {
             </h1>
             <p className="mt-4 max-w-2xl text-lg text-muted">
               Every engagement starts with the workflow, not the software. These are the problems
-              we take on most.
+              I take on most.
             </p>
           </Reveal>
         </div>

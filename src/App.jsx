@@ -9,7 +9,6 @@ import Blog from './pages/Blog.jsx';
 import BlogPost from './pages/BlogPost.jsx';
 import About from './pages/About.jsx';
 import Contact from './pages/Contact.jsx';
-import Guide from './pages/Guide.jsx';
 
 const Demo = lazy(() => import('./pages/Demo.jsx'));
 
@@ -38,7 +37,6 @@ export default function App() {
           <Route path="/blog/:slug" element={<BlogPost />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
-          <Route path="/guide" element={<Guide />} />
           <Route
             path="/demo"
             element={

@@ -103,7 +103,7 @@ export default function Blog() {
               )}
               {status === 'error' && (
                 <p className="mt-3 text-sm text-accent">
-                  Something went wrong. Try again, or email us instead.
+                  Something went wrong. Try again, or email me instead.
                 </p>
               )}
             </div>

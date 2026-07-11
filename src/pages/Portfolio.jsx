@@ -61,7 +61,7 @@ export default function Portfolio() {
           <Reveal>
             <div className="font-mono text-xs uppercase tracking-widest text-accent">Portfolio</div>
             <h1 className="mt-3 max-w-3xl font-display text-4xl font-bold uppercase leading-tight tracking-tight sm:text-5xl">
-              The workflows we build
+              The workflows I build
             </h1>
           </Reveal>
         </div>

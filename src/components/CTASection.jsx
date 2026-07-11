@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import Reveal from './Reveal.jsx';
 
 export default function CTASection({
-  heading = 'Bring us one messy process.',
+  heading = 'Bring me one messy process.',
   compact = false,
 }) {
   return (
@@ -16,7 +16,7 @@ export default function CTASection({
             {heading}
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-muted">
-            Bring one manual process, spreadsheet, approval chain, or paper workflow. We'll review
+            Bring one manual process, spreadsheet, approval chain, or paper workflow. I'll review
             where it breaks down, what can be simplified, and whether automation or a custom app
             makes sense.
           </p>
