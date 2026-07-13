@@ -1,8 +1,26 @@
 import Reveal from '../components/Reveal.jsx';
 import StatBlock from '../components/StatBlock.jsx';
+import Testimonial from '../components/Testimonial.jsx';
 import CTASection from '../components/CTASection.jsx';
 import { BadgeCheck } from 'lucide-react';
 import portrait from '../assets/brittany-portrait.jpg';
+
+const references = [
+  {
+    quote:
+      'The old systems of paper were scrapped, and Brittany had the entire set of historical records — totaling tens of thousands — and the entire department converted to electronic documents within weeks.',
+    name: 'Derek S.',
+    role: 'President, LATX Operations',
+    context: 'Oil & gas operations',
+  },
+  {
+    quote:
+      "Brittany led the company's payroll and benefit department with professionalism. She understands the importance of confidentiality in this role and has been a dedicated and trustworthy member of my staff.",
+    name: 'Jason A.',
+    role: 'Controller, Fowler Transportation, Ltd.',
+    context: 'Oilfield services & transportation',
+  },
+];
 
 const themes = [
   'HRIS migrations and cleanup',
@@ -91,6 +109,28 @@ export default function About() {
                 </div>
               </div>
             </Reveal>
+          </div>
+        </div>
+      </section>
+
+      <section className="border-b border-edge py-16">
+        <div className="mx-auto max-w-6xl px-5">
+          <Reveal>
+            <h2 className="font-display text-2xl font-bold uppercase tracking-tight">
+              What leaders she worked for say
+            </h2>
+            <p className="mt-3 max-w-2xl text-sm text-muted">
+              References from executives at the oilfield and transportation companies where
+              Brittany led HR and payroll, shared with permission. Last names are withheld at
+              their request.
+            </p>
+          </Reveal>
+          <div className="mt-10 grid gap-6 md:grid-cols-2">
+            {references.map((r, i) => (
+              <Reveal key={r.name} delay={(i % 2) * 100} className="h-full">
+                <Testimonial {...r} />
+              </Reveal>
+            ))}
           </div>
         </div>
       </section>

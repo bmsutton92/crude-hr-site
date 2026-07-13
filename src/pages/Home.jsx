@@ -288,6 +288,16 @@ export default function Home() {
                 pairs that operator experience with practical automation and custom app
                 development.
               </p>
+              <figure className="mt-8 border-l-2 border-accent pl-5">
+                <blockquote className="text-base italic leading-relaxed text-body">
+                  “The old systems of paper were scrapped, and Brittany had the entire set of
+                  historical records — totaling tens of thousands — and the entire department
+                  converted to electronic documents within weeks.”
+                </blockquote>
+                <figcaption className="mt-3 font-mono text-xs uppercase tracking-widest text-muted">
+                  Derek S. — President, LATX Operations
+                </figcaption>
+              </figure>
               <Link
                 to="/about"
                 className="mt-6 inline-block font-mono text-xs uppercase tracking-widest text-accent hover:text-accent-hover"

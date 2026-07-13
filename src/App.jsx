@@ -2,6 +2,7 @@ import { Routes, Route, useLocation } from 'react-router-dom';
 import { useEffect, lazy, Suspense } from 'react';
 import Nav from './components/Nav.jsx';
 import Footer from './components/Footer.jsx';
+import ChatWidget from './components/ChatWidget.jsx';
 import Home from './pages/Home.jsx';
 import Services from './pages/Services.jsx';
 import Portfolio from './pages/Portfolio.jsx';
@@ -54,6 +55,7 @@ export default function App() {
         </Routes>
       </main>
       {!isDemo && <Footer />}
+      {!isDemo && <ChatWidget />}
     </div>
   );
 }
