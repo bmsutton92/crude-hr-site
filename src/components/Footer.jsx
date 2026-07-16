@@ -20,6 +20,7 @@ export default function Footer() {
               <li><Link to="/services" className="text-body hover:text-accent">Services</Link></li>
               <li><Link to="/portfolio" className="text-body hover:text-accent">Portfolio</Link></li>
               <li><Link to="/demo" className="text-body hover:text-accent">Live Demo</Link></li>
+              <li><Link to="/pricing" className="text-body hover:text-accent">Pricing</Link></li>
               <li><Link to="/blog" className="text-body hover:text-accent">Blog</Link></li>
               <li><Link to="/about" className="text-body hover:text-accent">About</Link></li>
             </ul>
