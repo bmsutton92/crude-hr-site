@@ -24,6 +24,15 @@ function parseFrontmatter(raw) {
   return { data, body: match[2].trim() };
 }
 
+const DEFAULT_AUTHOR = 'Brittany Sutton';
+
+function formatDate(iso) {
+  if (!iso) return '';
+  const d = new Date(`${iso}T00:00:00`);
+  if (Number.isNaN(d.getTime())) return iso;
+  return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+}
+
 export const posts = Object.entries(files)
   .map(([path, raw]) => {
     const slug = path.split('/').pop().replace(/\.md$/, '');
@@ -32,6 +41,8 @@ export const posts = Object.entries(files)
       slug,
       title: data.title || slug,
       date: data.date || '',
+      dateDisplay: formatDate(data.date),
+      author: data.author || DEFAULT_AUTHOR,
       excerpt: data.excerpt || '',
       body,
     };

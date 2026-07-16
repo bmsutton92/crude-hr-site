@@ -5,25 +5,57 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Crude HR helps Texas and Gulf Coast oilfield, industrial, transportation, and manufacturing businesses replace manual back-office processes with practical automation, custom apps, and fractional HR support. Book a workflow review." />
     <meta name="keywords" content="oilfield workflow automation, Texas field ticketing software, industrial process automation, fractional HR Texas, field-to-finance automation, custom internal apps oilfield" />
+    <meta name="theme-color" content="#0C1017" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="canonical" href="https://crudehr.com/" />
     <title>Crude HR | Texas Field Operations &amp; Workflow Automation</title>
+
+    <!-- Open Graph / social preview (site-level defaults; per-route titles are updated on the client) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Crude HR" />
+    <meta property="og:title" content="Crude HR | Texas Field Operations &amp; Workflow Automation" />
+    <meta property="og:description" content="Workflow automation, custom internal apps, and fractional HR for Texas and Gulf Coast oilfield, industrial, and field-service businesses." />
+    <meta property="og:url" content="https://crudehr.com/" />
+    <meta property="og:image" content="https://crudehr.com/og-default.png" />
+    <meta property="og:locale" content="en_US" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Crude HR | Texas Field Operations &amp; Workflow Automation" />
+    <meta name="twitter:description" content="Workflow automation, custom internal apps, and fractional HR for Texas and Gulf Coast oilfield, industrial, and field-service businesses." />
+    <meta name="twitter:image" content="https://crudehr.com/og-default.png" />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": ["ProfessionalService", "Organization"],
+        "name": "Crude HR",
+        "legalName": "Crude HR Consulting",
+        "url": "https://crudehr.com/",
+        "image": "https://crudehr.com/og-default.png",
+        "description": "Crude HR helps Texas and Gulf Coast oilfield, industrial, transportation, and manufacturing businesses replace manual back-office processes with practical automation, custom apps, and fractional HR support.",
+        "areaServed": ["Texas", "Gulf Coast", "Permian Basin", "United States"],
+        "address": { "@type": "PostalAddress", "addressLocality": "Kilgore", "addressRegion": "TX", "addressCountry": "US" },
+        "founder": { "@type": "Person", "name": "Brittany Sutton", "jobTitle": "Founder", "hasCredential": "SHRM-CP" },
+        "serviceType": ["Workflow automation", "Custom app development", "Digital field ticketing", "Fractional HR support", "HR operations cleanup"]
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>
     <!-- Netlify form definitions. These hidden forms let Netlify detect the forms at deploy time. The React app posts to them with fetch. -->
     <form name="contact" netlify netlify-honeypot="bot-field" hidden>
-      <input type="text" name="name" />
-      <input type="text" name="company" />
-      <input type="email" name="email" />
-      <textarea name="process"></textarea>
+      <input type="text" name="name" aria-label="Name" />
+      <input type="text" name="company" aria-label="Company" />
+      <input type="email" name="email" aria-label="Email" />
+      <textarea name="process" aria-label="The one process you want reviewed"></textarea>
     </form>
     <form name="newsletter" netlify netlify-honeypot="bot-field" hidden>
-      <input type="email" name="email" />
+      <input type="email" name="email" aria-label="Email" />
     </form>
     <form name="meeting-request" netlify netlify-honeypot="bot-field" hidden>
-      <input type="text" name="name" />
-      <input type="text" name="company" />
-      <input type="email" name="email" />
-      <textarea name="note"></textarea>
+      <input type="text" name="name" aria-label="Name" />
+      <input type="text" name="company" aria-label="Company" />
+      <input type="email" name="email" aria-label="Email" />
+      <textarea name="note" aria-label="Note"></textarea>
     </form>
     <script type="module" src="/src/main.jsx"></script>
   </body>
