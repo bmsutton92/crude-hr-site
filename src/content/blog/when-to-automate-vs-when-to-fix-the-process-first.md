@@ -1,6 +1,7 @@
 ---
 title: When to Automate vs. When to Fix the Process First
 date: 2026-06-15
+author: Brittany Sutton
 excerpt: Automating a broken process gives you a faster broken process. Here is a simple test for which move comes first.
 ---
 

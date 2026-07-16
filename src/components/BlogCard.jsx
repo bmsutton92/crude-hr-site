@@ -7,7 +7,10 @@ export default function BlogCard({ post }) {
       to={`/blog/${post.slug}`}
       className="flex h-full flex-col border border-edge bg-steel/40 p-6 transition-transform duration-300 hover:-translate-y-1 hover:border-accent/60"
     >
-      <div className="font-mono text-[11px] uppercase tracking-widest text-muted">{post.date}</div>
+      <div className="font-mono text-[11px] uppercase tracking-widest text-muted">
+        {post.dateDisplay || post.date}
+        {post.author ? <span className="text-muted/70"> · {post.author}</span> : null}
+      </div>
       <h3 className="mt-2 font-display text-xl font-semibold uppercase leading-snug tracking-wide text-body">
         {post.title}
       </h3>
