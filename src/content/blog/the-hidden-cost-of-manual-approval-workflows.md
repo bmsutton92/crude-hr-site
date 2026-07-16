@@ -1,6 +1,7 @@
 ---
 title: The Hidden Cost of Manual Approval Workflows
 date: 2026-06-29
+author: Brittany Sutton
 excerpt: Approvals that live in email threads and truck cabs do not just move slowly. They hide the work from the people who need to see it.
 ---
 
