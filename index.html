@@ -3,32 +3,27 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="keywords" content="oilfield workflow automation, Texas field ticketing software, industrial process automation, fractional HR Texas, field-to-finance automation, custom internal apps oilfield" />
-    <meta name="theme-color" content="#0b0f17" />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <!-- Per-route <title>, description, canonical, Open Graph, Twitter, and JSON-LD
-         are injected at build time by the prerender step and kept in sync on the
-         client during navigation (see src/lib/head.js). -->
-    <title>Crude HR | Workflow Automation &amp; Fractional HR for Texas Field Operations</title>
     <meta name="description" content="Crude HR helps Texas and Gulf Coast oilfield, industrial, transportation, and manufacturing businesses replace manual back-office processes with practical automation, custom apps, and fractional HR support. Book a workflow review." />
+    <meta name="keywords" content="oilfield workflow automation, Texas field ticketing software, industrial process automation, fractional HR Texas, field-to-finance automation, custom internal apps oilfield" />
+    <title>Crude HR | Texas Field Operations &amp; Workflow Automation</title>
   </head>
   <body>
     <div id="root"></div>
     <!-- Netlify form definitions. These hidden forms let Netlify detect the forms at deploy time. The React app posts to them with fetch. -->
     <form name="contact" netlify netlify-honeypot="bot-field" hidden>
-      <input type="text" name="name" aria-label="Name" />
-      <input type="text" name="company" aria-label="Company" />
-      <input type="email" name="email" aria-label="Email" />
-      <textarea name="process" aria-label="The one process you want reviewed"></textarea>
+      <input type="text" name="name" />
+      <input type="text" name="company" />
+      <input type="email" name="email" />
+      <textarea name="process"></textarea>
     </form>
     <form name="newsletter" netlify netlify-honeypot="bot-field" hidden>
-      <input type="email" name="email" aria-label="Email" />
+      <input type="email" name="email" />
     </form>
     <form name="meeting-request" netlify netlify-honeypot="bot-field" hidden>
-      <input type="text" name="name" aria-label="Name" />
-      <input type="text" name="company" aria-label="Company" />
-      <input type="email" name="email" aria-label="Email" />
-      <textarea name="note" aria-label="Note"></textarea>
+      <input type="text" name="name" />
+      <input type="text" name="company" />
+      <input type="email" name="email" />
+      <textarea name="note"></textarea>
     </form>
     <script type="module" src="/src/main.jsx"></script>
   </body>

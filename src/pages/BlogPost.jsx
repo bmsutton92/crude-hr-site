@@ -29,18 +29,12 @@ export default function BlogPost() {
           >
             <ArrowLeft size={14} /> All posts
           </Link>
-          <h1 className="mt-8 font-display text-4xl font-bold uppercase leading-tight tracking-tight sm:text-5xl">
+          <div className="mt-8 font-mono text-xs uppercase tracking-widest text-accent">
+            {post.date}
+          </div>
+          <h1 className="mt-3 font-display text-4xl font-bold uppercase leading-tight tracking-tight sm:text-5xl">
             {post.title}
           </h1>
-          <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-xs uppercase tracking-widest text-muted">
-            <span className="text-accent">By {post.author}</span>
-            {post.dateDisplay && (
-              <>
-                <span aria-hidden="true">/</span>
-                <time dateTime={post.date}>Published {post.dateDisplay}</time>
-              </>
-            )}
-          </div>
           <div
             className="prose-crude mt-10"
             dangerouslySetInnerHTML={{ __html: marked.parse(post.body) }}

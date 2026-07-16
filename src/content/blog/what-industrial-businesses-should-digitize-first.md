@@ -1,7 +1,6 @@
 ---
 title: What Industrial Businesses Should Digitize First
 date: 2026-06-08
-author: Brittany Sutton
 excerpt: Not everything deserves to be first. Start where paper touches money, then work outward.
 ---
 

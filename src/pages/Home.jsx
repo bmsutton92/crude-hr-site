@@ -177,11 +177,6 @@ export default function Home() {
             <h2 className="mt-3 font-display text-3xl font-bold uppercase leading-tight tracking-tight sm:text-4xl">
               Three ways to get the paper out of the process
             </h2>
-            <p className="mt-4 max-w-2xl text-muted">
-              Built for oilfield, industrial, transportation, and manufacturing operations across
-              Texas, the Gulf Coast, and the Permian Basin — with the field terminology (JSAs,
-              company-man sign-off, day-rate crews) generic software leaves out.
-            </p>
           </Reveal>
           <div className="mt-12 grid gap-6 md:grid-cols-3">
             <Reveal>

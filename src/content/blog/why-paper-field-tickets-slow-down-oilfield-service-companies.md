@@ -1,7 +1,6 @@
 ---
 title: Why Paper Field Tickets Slow Down Oilfield Service Companies
 date: 2026-07-06
-author: Brittany Sutton
 excerpt: The ticket is not the problem. The trip it takes after the job is done is where the money sits still.
 ---
 

@@ -1,7 +1,6 @@
 ---
 title: How Field-to-Finance Automation Improves Visibility
 date: 2026-06-22
-author: Brittany Sutton
 excerpt: When field data flows straight into payroll and billing, finance stops reconstructing the past and starts seeing the present.
 ---
 
