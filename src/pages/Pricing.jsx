@@ -46,23 +46,9 @@ const tiers = [
   },
 ];
 
-const faqSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'FAQPage',
-  mainEntity: PRICING_FAQ.map((f) => ({
-    '@type': 'Question',
-    name: f.q,
-    acceptedAnswer: { '@type': 'Answer', text: f.a },
-  })),
-};
-
 export default function Pricing() {
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema).replace(/</g, '\\u003c') }}
-      />
       <section className="border-b border-edge py-20">
         <div className="mx-auto max-w-6xl px-5">
           <Reveal>

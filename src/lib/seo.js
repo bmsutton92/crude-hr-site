@@ -3,11 +3,59 @@ import { posts, getPost } from './posts.js';
 export const SITE = {
   url: 'https://crudehr.com',
   name: 'Crude HR',
+  legalName: 'Crude HR Consulting',
+  founder: 'Brittany Sutton',
   defaultTitle: 'Crude HR | Texas Field Operations & Workflow Automation',
   defaultDescription:
     'Crude HR helps Texas and Gulf Coast oilfield, industrial, transportation, and manufacturing businesses replace manual back-office processes with practical automation, custom apps, and fractional HR support. Book a workflow review.',
   ogImage: 'https://crudehr.com/og-default.png',
+  areaServed: ['Texas', 'Gulf Coast', 'Permian Basin', 'United States'],
 };
+
+const organizationLd = {
+  '@type': ['ProfessionalService', 'Organization'],
+  '@id': `${SITE.url}/#organization`,
+  name: SITE.name,
+  legalName: SITE.legalName,
+  url: `${SITE.url}/`,
+  image: SITE.ogImage,
+  description: SITE.defaultDescription,
+  areaServed: SITE.areaServed.map((name) => ({ '@type': 'AdministrativeArea', name })),
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: 'Kilgore',
+    addressRegion: 'TX',
+    addressCountry: 'US',
+  },
+  founder: {
+    '@type': 'Person',
+    name: SITE.founder,
+    jobTitle: 'Founder',
+    hasCredential: 'SHRM-CP',
+  },
+  serviceType: [
+    'Workflow automation',
+    'Custom app development',
+    'Digital field ticketing',
+    'Fractional HR support',
+    'HR operations cleanup',
+  ],
+};
+
+const personLd = {
+  '@type': 'Person',
+  '@id': `${SITE.url}/about#brittany-sutton`,
+  name: SITE.founder,
+  jobTitle: 'Founder, HR & Operations Leader',
+  worksFor: { '@id': `${SITE.url}/#organization` },
+  hasCredential: 'SHRM-CP',
+  description:
+    'HR and operations leader with 15+ years inside oilfield services, transportation, manufacturing, and education. Runs payroll, closes compliance audits, and builds the automation herself.',
+};
+
+function graph(nodes) {
+  return { '@context': 'https://schema.org', '@graph': nodes };
+}
 
 // Per-route title/description. Keys are exact pathnames (no trailing slash).
 const routes = {
@@ -62,22 +110,80 @@ export function getSeo(pathname) {
   if (path.startsWith('/blog/')) {
     const post = getPost(path.slice('/blog/'.length));
     if (post) {
+      const canonical = `${SITE.url}/blog/${post.slug}`;
+      const description = post.excerpt || SITE.defaultDescription;
       return {
         title: `${post.title} | Crude HR`,
-        description: post.excerpt || SITE.defaultDescription,
-        canonical: `${SITE.url}/blog/${post.slug}`,
+        description,
+        canonical,
         ogType: 'article',
+        jsonLd: graph([
+          organizationLd,
+          {
+            '@type': 'Article',
+            headline: post.title,
+            description,
+            datePublished: post.date || undefined,
+            dateModified: post.date || undefined,
+            author: { '@type': 'Person', name: post.author || SITE.founder, '@id': `${SITE.url}/about#brittany-sutton` },
+            publisher: { '@id': `${SITE.url}/#organization` },
+            mainEntityOfPage: canonical,
+            url: canonical,
+          },
+          {
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              { '@type': 'ListItem', position: 1, name: 'Blog', item: `${SITE.url}/blog` },
+              { '@type': 'ListItem', position: 2, name: post.title, item: canonical },
+            ],
+          },
+        ]),
       };
     }
   }
 
   const meta = routes[path] || { title: SITE.defaultTitle, description: SITE.defaultDescription };
+  const nodes = [organizationLd];
+  if (path === '/about') nodes.push(personLd);
+  if (path === '/blog') {
+    nodes.push({
+      '@type': 'Blog',
+      '@id': `${SITE.url}/blog#blog`,
+      name: 'Crude HR Blog',
+      url: `${SITE.url}/blog`,
+      publisher: { '@id': `${SITE.url}/#organization` },
+      blogPost: posts.map((p) => ({
+        '@type': 'BlogPosting',
+        headline: p.title,
+        url: `${SITE.url}/blog/${p.slug}`,
+        datePublished: p.date || undefined,
+        author: { '@type': 'Person', name: p.author || SITE.founder },
+      })),
+    });
+  }
+  if (path === '/pricing') {
+    nodes.push({
+      '@type': 'FAQPage',
+      '@id': `${SITE.url}/pricing#faq`,
+      mainEntity: PRICING_FAQ.map((f) => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text: f.a },
+      })),
+    });
+  }
+
   return {
     title: meta.title,
     description: meta.description,
     canonical: `${SITE.url}${path === '/' ? '/' : path}`,
     ogType: 'website',
+    jsonLd: graph(nodes),
   };
+}
+
+export function serializeJsonLd(data) {
+  return JSON.stringify(data).replace(/</g, '\\u003c');
 }
 
 // Shared FAQ content — rendered on the Pricing page and mirrored in FAQPage schema.
