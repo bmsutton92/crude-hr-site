@@ -409,7 +409,7 @@ export default function TicketDetailView({
                     onClick={() => onApprove && onApprove(ticket.id)}
                     className="flex-1 py-2 text-xs font-black uppercase bg-amber-500 text-black hover:bg-amber-400 rounded cursor-pointer transition-all flex items-center justify-center gap-1"
                   >
-                    <Check size={14} /> Approve & Dispatch
+                    <Check size={14} /> Approve & Settle
                   </button>
                 </div>
               </div>

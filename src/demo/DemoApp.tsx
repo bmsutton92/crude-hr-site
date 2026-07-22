@@ -5,6 +5,7 @@ import HistoryDashboard from "./components/HistoryDashboard";
 import TicketForm from "./components/TicketForm";
 import TicketDetailView from "./components/TicketDetailView";
 import PriceBookView from "./components/PriceBookView";
+import ExportGrids from "./components/ExportGrids";
 
 import { 
   Building2, 
@@ -30,6 +31,10 @@ export default function App() {
   // Current ticket interaction state pointers
   const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
   const [isEditing, setIsEditing] = useState<boolean>(false);
+
+  // The just-approved ticket, whose data is parsed into the live export grids
+  // shown below the app. Kept in memory only — never persisted.
+  const [exportTicket, setExportTicket] = useState<Ticket | null>(null);
 
   // Simulated live event logger for showing background integrations (Invoicing & Ticket splits)
   const [systemLogs, setSystemLogs] = useState<SystemLog[]>([
@@ -86,6 +91,7 @@ export default function App() {
       setTickets(INITIAL_TICKETS);
       setSelectedTicket(null);
       setIsEditing(false);
+      setExportTicket(null);
       appendSystemLog("Initiated database factory reset. Historical registers repopulated.", "warning");
     }
   };
@@ -134,20 +140,19 @@ export default function App() {
     const aggregateTotal = target.lineItems.reduce((sum, item) => sum + item.total, 0);
     const wagePortion = parseFloat((target.hoursWorked * 35.0 + aggregateTotal * 0.05).toFixed(2));
 
-    setTickets((prev) =>
-      prev.map((t) =>
-        t.id === ticketId
-          ? {
-              ...t,
-              status: "Approved",
-              approvedAt: new Date().toISOString(),
-              payrollAmount: wagePortion,
-              billingAmount: aggregateTotal
-            }
-          : t
-      )
-    );
-    
+    const approvedTicket: Ticket = {
+      ...target,
+      status: "Approved",
+      approvedAt: new Date().toISOString(),
+      payrollAmount: wagePortion,
+      billingAmount: aggregateTotal
+    };
+
+    setTickets((prev) => prev.map((t) => (t.id === ticketId ? approvedTicket : t)));
+
+    // Feed the approved ticket into the live export grids below the app.
+    setExportTicket(approvedTicket);
+
      // Step 6 Trigger (Simulate patching data & splitting to invoicing and ticket ledger ERP triggers)
     setTimeout(() => {
       appendSystemLog(
@@ -190,6 +195,7 @@ export default function App() {
   const handleEditDraftTicket = (ticketToEdit: Ticket) => {
     setIsEditing(true);
     setSelectedTicket(ticketToEdit);
+    setExportTicket(null);
     appendSystemLog(`Locked into edits: Drafting Workspace for #${ticketToEdit.ticketNumber}`, "info");
   };
 
@@ -435,6 +441,7 @@ export default function App() {
                     onCreateNewTicket={() => {
                       setIsEditing(true);
                       setSelectedTicket(null);
+                      setExportTicket(null);
                       appendSystemLog("Initiated fresh new Digital Field Ticket sequence.", "info");
                     }}
                     onResetDatabase={handleResetDatabase}
@@ -446,6 +453,9 @@ export default function App() {
               </div>
             </div>
           </section>
+
+          {/* LIVE EXPORT GRIDS: the approved ticket parsed into finance-ready rows */}
+          <ExportGrids ticket={exportTicket} />
 
         </div>
       </main>
