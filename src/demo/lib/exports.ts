@@ -77,6 +77,20 @@ export function toPaylocity(t: ExportInput) {
   return { rows, gross };
 }
 
+// Serialize export rows to CSV text (raw, finance-ready values — no $ formatting).
+export function rowsToCsv(rows: Array<Record<string, unknown>>): string {
+  if (!rows.length) return "";
+  const cols = Object.keys(rows[0]);
+  const esc = (v: unknown) => {
+    if (v === null || v === undefined) return "";
+    const s = String(v);
+    return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+  };
+  const header = cols.join(",");
+  const body = rows.map((r) => cols.map((c) => esc(r[c])).join(",")).join("\n");
+  return `${header}\n${body}\n`;
+}
+
 // ---------------------------------------------------------------------------
 // Adapter: map the app's real Ticket onto the ExportInput the functions expect.
 // Real ticket values are used wherever the app captures them. Fields the app
