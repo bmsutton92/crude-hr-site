@@ -1,4 +1,4 @@
-import { Routes, Route, useLocation } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useEffect, lazy, Suspense } from 'react';
 import Nav from './components/Nav.jsx';
 import Footer from './components/Footer.jsx';
@@ -11,6 +11,7 @@ import BlogPost from './pages/BlogPost.jsx';
 import About from './pages/About.jsx';
 import Contact from './pages/Contact.jsx';
 import Pricing from './pages/Pricing.jsx';
+import CaseStudy from './pages/CaseStudy.jsx';
 import { applyHead } from './lib/head.js';
 
 const Demo = lazy(() => import('./pages/Demo.jsx'));
@@ -47,6 +48,8 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/services" element={<Services />} />
           <Route path="/portfolio" element={<Portfolio />} />
+          <Route path="/case-studies" element={<Navigate to="/portfolio" replace />} />
+          <Route path="/case-studies/:slug" element={<CaseStudy />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:slug" element={<BlogPost />} />
           <Route path="/about" element={<About />} />

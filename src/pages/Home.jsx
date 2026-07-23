@@ -7,7 +7,9 @@ import CaseCard from '../components/CaseCard.jsx';
 import BlogCard from '../components/BlogCard.jsx';
 import WorkflowDiagram from '../components/WorkflowDiagram.jsx';
 import CTASection from '../components/CTASection.jsx';
+import CaseStudyCard from '../components/CaseStudyCard.jsx';
 import { posts } from '../lib/posts.js';
+import { caseStudies } from '../lib/caseStudies.js';
 import heroPortrait from '../assets/brittany-hero.jpg';
 
 const painPoints = [
@@ -270,6 +272,39 @@ export default function Home() {
               className="font-mono text-xs uppercase tracking-widest text-accent hover:text-accent-hover"
             >
               See all workflow examples →
+            </Link>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* Founder credibility */}
+      <section className="border-b border-edge py-20">
+        <div className="mx-auto max-w-6xl px-5">
+          <Reveal>
+            <div className="font-mono text-xs uppercase tracking-widest text-accent">
+              Featured Case Studies
+            </div>
+            <h2 className="mt-3 max-w-3xl font-display text-3xl font-bold uppercase leading-tight tracking-tight sm:text-4xl">
+              See the process, the operating problem, and the proposed result
+            </h2>
+            <p className="mt-4 max-w-2xl text-muted">
+              Clearly labeled prototypes and anonymized professional experience—without invented
+              client names or performance claims.
+            </p>
+          </Reveal>
+          <div className="mt-12 grid gap-6 md:grid-cols-2">
+            {caseStudies.filter((study) => study.featured).slice(0, 2).map((study, index) => (
+              <Reveal key={study.slug} delay={index * 100} className="h-full">
+                <CaseStudyCard study={study} />
+              </Reveal>
+            ))}
+          </div>
+          <Reveal className="mt-8">
+            <Link
+              to="/portfolio"
+              className="font-mono text-xs uppercase tracking-widest text-accent hover:text-accent-hover"
+            >
+              View all case studies →
             </Link>
           </Reveal>
         </div>
