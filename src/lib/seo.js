@@ -1,4 +1,5 @@
 import { posts, getPost } from './posts.js';
+import { getCaseStudy } from './caseStudies.js';
 
 export const SITE = {
   url: 'https://crudehr.com',
@@ -135,6 +136,39 @@ export function getSeo(pathname) {
             itemListElement: [
               { '@type': 'ListItem', position: 1, name: 'Blog', item: `${SITE.url}/blog` },
               { '@type': 'ListItem', position: 2, name: post.title, item: canonical },
+            ],
+          },
+        ]),
+      };
+    }
+  }
+
+  if (path.startsWith('/case-studies/')) {
+    const study = getCaseStudy(path.slice('/case-studies/'.length));
+    if (study) {
+      const canonical = `${SITE.url}/case-studies/${study.slug}`;
+      const description = study.summary || SITE.defaultDescription;
+      return {
+        title: `${study.eyebrow} — Case Study | Crude HR`,
+        description,
+        canonical,
+        ogType: 'article',
+        jsonLd: graph([
+          organizationLd,
+          {
+            '@type': 'Article',
+            headline: study.title,
+            description,
+            author: { '@type': 'Person', name: SITE.founder, '@id': `${SITE.url}/about#brittany-sutton` },
+            publisher: { '@id': `${SITE.url}/#organization` },
+            mainEntityOfPage: canonical,
+            url: canonical,
+          },
+          {
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              { '@type': 'ListItem', position: 1, name: 'Portfolio', item: `${SITE.url}/portfolio` },
+              { '@type': 'ListItem', position: 2, name: study.title, item: canonical },
             ],
           },
         ]),

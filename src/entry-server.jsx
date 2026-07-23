@@ -3,6 +3,7 @@ import { renderToString } from 'react-dom/server';
 import { StaticRouter } from 'react-router';
 import App from './App.jsx';
 import { posts } from './lib/posts.js';
+import { caseStudies } from './lib/caseStudies.js';
 import { getSeo } from './lib/seo.js';
 import { renderHeadHtml } from './lib/head.js';
 
@@ -29,7 +30,11 @@ export function getRoutes() {
     '/pricing',
     '/demo',
   ];
-  return [...staticRoutes, ...posts.map((p) => `/blog/${p.slug}`)];
+  return [
+    ...staticRoutes,
+    ...posts.map((p) => `/blog/${p.slug}`),
+    ...caseStudies.map((s) => `/case-studies/${s.slug}`),
+  ];
 }
 
 export function headFor(url) {
