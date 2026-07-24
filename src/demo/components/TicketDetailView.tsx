@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Ticket, TicketStatus } from "../types";
+import { computeBonus, nextBonusPayDate } from "../lib/exports";
 import { 
   CheckCircle2, 
   XCircle, 
@@ -63,18 +64,22 @@ export default function TicketDetailView({
   const statusInfo = statusColors[ticket.status];
   const StatusIcon = statusInfo.icon;
 
+  // Pricing is decoupled from the field-hand view — dollars render only for the
+  // supervisor / office roles. The field hand sees logged operational units only.
+  const showPricing = activeRole !== "hand";
+
   const aggregateTotal = ticket.lineItems.reduce((sum, item) => sum + item.total, 0);
 
-  // Calculates simulated payroll with 3rd party exclusions and multi-day ongoing bonuses
+  // The employee's only earning is the bonus (5% of non-3rd-party revenue). Hours bill the client.
   const activeSubtotal = ticket.lineItems.filter(i => !i.isThirdParty).reduce((sum, item) => sum + item.total, 0);
+  const passThroughTotal = aggregateTotal - activeSubtotal; // 3rd-party freight / chemicals excluded from bonus
   const activeBonus = activeSubtotal * 0.05;
-  const ongoingBonus = ticket.isOngoing ? ((ticket.runningDaysTally || 1) * 150.0) : 0;
-  const simulatedPayroll = ticket.payrollAmount || parseFloat((ticket.hoursWorked * 35.0 + activeBonus + ongoingBonus).toFixed(2));
+  const simulatedPayroll = ticket.payrollAmount ?? activeBonus;
   const simulatedBillingInvoice = ticket.billingAmount || aggregateTotal;
 
   const handleRejectSubmit = () => {
     if (!correctionNotes.trim()) {
-      alert("Please provide the specific correction notes so the field hand can adjust spelling/safety checklists.");
+      alert("Please provide the specific correction notes so the field employee can adjust spelling/safety checklists.");
       return;
     }
     if (onReject) {
@@ -82,6 +87,12 @@ export default function TicketDetailView({
       setRejectMode(false);
     }
   };
+
+  // Bonus figures for the field-employee approved view — shown as an added panel
+  // on top of the same ticket detail they saw when it was pending.
+  const showEmployeeBonus = activeRole === "hand" && ticket.status === "Approved";
+  const employeeBonus = computeBonus(ticket).bonus;
+  const employeeBonusPayDate = nextBonusPayDate(ticket.approvedAt);
 
   return (
     <div id={`tkt-detail-${ticket.id}`} className="flex flex-col gap-5 px-1 py-1 text-zinc-200">
@@ -134,6 +145,22 @@ export default function TicketDetailView({
         )}
       </div>
 
+      {/* Field-employee bonus panel — shown on the approved ticket alongside the full detail */}
+      {showEmployeeBonus && (
+        <div className="bg-zinc-900 border border-amber-500/25 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div className="flex flex-col gap-0.5">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 font-mono">Total Bonus Earned</span>
+            <span className="text-2xl font-mono font-black text-amber-500">
+              ${employeeBonus.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+            </span>
+          </div>
+          <div className="flex items-center gap-1.5 text-xs text-zinc-400 bg-zinc-950 border border-zinc-850 rounded-lg px-3 py-2">
+            <Clock size={13} className="text-green-400" />
+            Next bonus pay date: <strong className="text-zinc-200">{employeeBonusPayDate}</strong>
+          </div>
+        </div>
+      )}
+
       {/* Primary Ops Section split */}
       <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 flex flex-col gap-4">
         <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 font-mono">
@@ -166,7 +193,7 @@ export default function TicketDetailView({
             </span>
           </div>
           <div className="flex flex-col gap-0.5 col-span-2">
-            <span className="text-zinc-500 font-bold uppercase tracking-wider text-[9px]">Field Hand / Direct Report</span>
+            <span className="text-zinc-500 font-bold uppercase tracking-wider text-[9px]">Field Employee / Direct Report</span>
             <span className="text-zinc-300 flex items-center gap-1 font-bold">
               <User size={12} className="text-amber-500" /> {ticket.fieldHandName || "Cody Rogers"}
             </span>
@@ -265,10 +292,11 @@ export default function TicketDetailView({
 
 
 
-      {/* Pricing / Financial Ledger breakdown (Table1 Auto Pricing matches) */}
+      {/* Pricing / Financial Ledger breakdown (Table1 Auto Pricing matches).
+          For the field hand this is a units-only log — contract dollars are hidden. */}
       <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 flex flex-col gap-3">
         <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 font-mono">
-          III. Auto-Pricing Worksheet (Contract Rates)
+          {showPricing ? "III. Auto-Pricing Worksheet (Contract Rates)" : "III. Logged Operational Units"}
         </h3>
 
         <div className="flex flex-col gap-2 max-h-[220px] overflow-y-auto">
@@ -283,24 +311,75 @@ export default function TicketDetailView({
                     </span>
                   )}
                 </div>
-                <span className="text-xs font-bold font-mono text-zinc-100">${item.total.toLocaleString(undefined, {minimumFractionDigits: 2})}</span>
+                {showPricing ? (
+                  <span className="text-xs font-bold font-mono text-zinc-100">${item.total.toLocaleString(undefined, {minimumFractionDigits: 2})}</span>
+                ) : (
+                  <span className="text-[10px] font-bold font-mono text-zinc-400 uppercase tracking-wider whitespace-nowrap">{item.quantity} {item.unitMeasure}</span>
+                )}
               </div>
               <div className="flex items-center justify-between text-[10px] font-mono text-zinc-500 mt-1.5 border-t border-zinc-900 pt-1.5">
                 <span>Category: <strong className="text-zinc-400 capitalize">{item.category}</strong></span>
-                <span>Qty: <strong className="text-zinc-300">{item.quantity} {item.unitMeasure}</strong> @ ${item.unitRate}</span>
+                <span>Qty: <strong className="text-zinc-300">{item.quantity} {item.unitMeasure}</strong>{showPricing ? ` @ $${item.unitRate}` : ""}</span>
               </div>
             </div>
           ))}
         </div>
 
-        {/* Combined invoice sum */}
-        <div className="bg-zinc-950 border border-zinc-855 p-3 rounded-xl flex items-center justify-between">
-          <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Estimated Total:</span>
-          <span className="text-base font-bold font-mono text-amber-500">
-            ${aggregateTotal.toLocaleString(undefined, {minimumFractionDigits: 2})}
-          </span>
-        </div>
+        {/* Combined invoice sum — supervisor / office only */}
+        {showPricing ? (
+          <div className="bg-zinc-950 border border-zinc-855 p-3 rounded-xl flex items-center justify-between">
+            <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Estimated Total:</span>
+            <span className="text-base font-bold font-mono text-amber-500">
+              ${aggregateTotal.toLocaleString(undefined, {minimumFractionDigits: 2})}
+            </span>
+          </div>
+        ) : (
+          <div className="bg-zinc-950 border border-zinc-855 p-3 rounded-xl flex items-center justify-between">
+            <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Operational Log:</span>
+            <span className="text-xs font-bold font-mono text-zinc-300">
+              {ticket.lineItems.length} line items · priced at supervisor gate
+            </span>
+          </div>
+        )}
       </div>
+
+      {/* Supervisor bonus-pool audit — transparent gross → pass-through → net eligible math */}
+      {showPricing && (
+        <div id="supervisor-bonus-audit" className="bg-zinc-900 border border-blue-500/20 rounded-xl p-4 flex flex-col gap-3">
+          <h3 className="text-[10px] font-bold uppercase tracking-widest text-blue-400 font-mono flex items-center gap-1.5">
+            <FileSpreadsheet size={12} className="text-blue-400" />
+            Supervisor Audit — Bonus Pool Math
+          </h3>
+          <div className="flex flex-col gap-2 font-mono text-xs">
+            <div className="flex items-center justify-between">
+              <span className="text-zinc-400">Gross Billed Revenue</span>
+              <span className="text-zinc-100 font-bold">${aggregateTotal.toLocaleString(undefined, {minimumFractionDigits: 2})}</span>
+            </div>
+            {passThroughTotal > 0 && (
+              <div className="flex items-center justify-between text-rose-400">
+                <span className="flex items-center gap-1.5">
+                  <span className="text-[8px] uppercase tracking-wider bg-rose-500/10 border border-rose-500/25 px-1 py-0.5 rounded">Pass-Through</span>
+                  Less Non-Bonus (3rd-Party)
+                </span>
+                <span className="font-bold">– ${passThroughTotal.toLocaleString(undefined, {minimumFractionDigits: 2})}</span>
+              </div>
+            )}
+            <div className="flex items-center justify-between border-t border-zinc-800 pt-2 mt-0.5">
+              <span className="text-amber-500 font-bold uppercase tracking-wide text-[10px]">Net Bonus-Eligible</span>
+              <span className="text-amber-500 font-bold">${activeSubtotal.toLocaleString(undefined, {minimumFractionDigits: 2})}</span>
+            </div>
+            <div className="flex items-center justify-between text-green-400">
+              <span>Field Bonus Pool (5% of eligible)</span>
+              <span className="font-bold">${activeBonus.toLocaleString(undefined, {minimumFractionDigits: 2})}</span>
+            </div>
+          </div>
+          {passThroughTotal > 0 && (
+            <p className="text-[10px] text-zinc-500 leading-normal">
+              Third-party trucking, chemicals, and fuel are billed to the customer but excluded from the field bonus pool. The automation splits the ledger before the ticket reaches the supervisor — no manual math.
+            </p>
+          )}
+        </div>
+      )}
 
       {/* Signature review rendering */}
       <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 flex flex-col gap-3">
@@ -345,8 +424,8 @@ export default function TicketDetailView({
         </p>
       </div>
 
-      {/* BACKEND TRIGGERED RELEASE LEDGER (Section 6: Ticket & Billing Release) */}
-      {ticket.status === "Approved" && (
+      {/* BACKEND TRIGGERED RELEASE LEDGER (Section 6: Ticket & Billing Release) — supervisor / office only */}
+      {showPricing && ticket.status === "Approved" && (
         <div id="backend-automated-release-panel" className="bg-amber-500/5 border border-amber-500/20 rounded-xl p-4 flex flex-col gap-3">
           <h4 className="text-xs font-bold font-mono text-amber-500 uppercase tracking-widest flex items-center gap-1.5">
             <Sparkles size={13} className="text-amber-500 animate-pulse" />
@@ -365,16 +444,20 @@ export default function TicketDetailView({
                 <p className="text-[8px] text-zinc-600 mt-0.5">Approved Ledger Sent</p>
               </div>
               <div className="mt-4 text-xs font-bold text-zinc-300 flex items-baseline gap-0.5">
-                <span className="text-[10px] text-zinc-500">$</span>{simulatedBillingInvoice.toLocaleString(undefined, {minimumFractionDigits: 2})}
+                {showPricing ? (
+                  <><span className="text-[10px] text-zinc-500">$</span>{simulatedBillingInvoice.toLocaleString(undefined, {minimumFractionDigits: 2})}</>
+                ) : (
+                  <span className="text-green-400 text-[11px] uppercase tracking-wider">Dispatched ✓</span>
+                )}
               </div>
             </div>
 
-            {/* TICKET LEDGER RELEASE */}
+            {/* EMPLOYEE BONUS RELEASE */}
             <div className="bg-zinc-950 border border-zinc-800 p-3 rounded-lg flex flex-col justify-between">
               <div>
-                <span className="text-[8px] uppercase font-bold text-amber-500 tracking-wider">Ticket Department</span>
-                <h5 className="text-[11px] font-bold text-amber-500 mt-1">Direct Deposit</h5>
-                <p className="text-[8px] text-zinc-600 mt-0.5">Ledger Credited</p>
+                <span className="text-[8px] uppercase font-bold text-amber-500 tracking-wider">Employee Bonus</span>
+                <h5 className="text-[11px] font-bold text-amber-500 mt-1">Bonus Payout</h5>
+                <p className="text-[8px] text-zinc-600 mt-0.5">Bonus Credited</p>
               </div>
               <div className="mt-4 text-xs font-bold text-amber-500 flex items-baseline gap-0.5">
                 <span className="text-[10px] text-amber-500">$</span>{simulatedPayroll.toFixed(2)}
@@ -412,6 +495,15 @@ export default function TicketDetailView({
                     <Check size={14} /> Approve & Settle
                   </button>
                 </div>
+                {onEditDraft && (
+                  <button
+                    id="supervisor-edit-ticket-btn"
+                    onClick={() => onEditDraft(ticket)}
+                    className="w-full py-2 text-[11px] font-bold uppercase tracking-wider bg-zinc-900 text-zinc-300 border border-zinc-800 hover:border-blue-500/50 hover:text-blue-400 rounded cursor-pointer transition-all flex items-center justify-center gap-1.5"
+                  >
+                    <FileSpreadsheet size={13} /> Edit Ticket Details
+                  </button>
+                )}
               </div>
             ) : (
               <div className="flex flex-col gap-2 animate-fadeIn">

@@ -48,33 +48,47 @@ export function toNetSuite(t: ExportInput) {
   return { rows, total };
 }
 
-// --- Payroll export: per-day hours + per diem + bonus -> Paylocity --- (verbatim from spec)
-export function toPaylocity(t: ExportInput) {
+// Canonical field-employee BONUS math — the single source shared by the ticket
+// bonus figure, the supervisor bonus audit, and the Paylocity export, so they
+// always reconcile. The ticket captures hours for BILLING, not payroll: the only
+// amount that flows to the employee here is the bonus = 5% of bonus-eligible
+// revenue (3rd-party pass-throughs — freight, chemicals, fuel — excluded).
+export function computeBonus(t: Ticket) {
+  const eligibleSubtotal = t.lineItems
+    .filter((li) => !li.isThirdParty)
+    .reduce((s, li) => s + li.total, 0);
+  const bonus = +(eligibleSubtotal * 0.05).toFixed(2);
+  return { eligibleSubtotal, bonus };
+}
+
+// Next bonus disbursement date (bonuses run on the 15th) from an approval date.
+export function nextBonusPayDate(fromISO?: string): string {
+  const base = fromISO ? new Date(fromISO) : new Date();
+  const PAY_DAY = 15;
+  const target = base.getDate() <= PAY_DAY
+    ? new Date(base.getFullYear(), base.getMonth(), PAY_DAY)
+    : new Date(base.getFullYear(), base.getMonth() + 1, PAY_DAY);
+  return target.toLocaleDateString(undefined, { month: "long", day: "numeric", year: "numeric" });
+}
+
+// --- Payroll export -> Paylocity. Bonus pay only (no base/REG hours, no
+//     multi-day line): the ticket's hours bill the client, they don't pay the hand. ---
+export function toPaylocity(t: Ticket) {
+  const name = t.fieldHandName || "Cody Rogers";
+  const { bonus } = computeBonus(t);
+
   const rows: Array<{
     EmployeeID: string; Employee: string; WorkDate: string;
     EarningCode: string; Hours: number | string; Rate: number | string;
     Amount: number; CostCenter: string;
-  }> = [];
-  for (let d = 0; d < t.days; d++) {
-    const date = new Date(2026, 6, 13 + d).toISOString().slice(0, 10);
-    rows.push({
-      EmployeeID: t.hand.id, Employee: t.hand.name, WorkDate: date,
-      EarningCode: "REG", Hours: t.hoursPerDay, Rate: t.hourlyRate,
-      Amount: t.hoursPerDay * t.hourlyRate, CostCenter: t.costCenter,
-    });
-  }
-  rows.push({
-    EmployeeID: t.hand.id, Employee: t.hand.name, WorkDate: "2026-07-20",
-    EarningCode: "PERDIEM", Hours: "", Rate: "",
-    Amount: t.perDiemPerDay * t.days, CostCenter: t.costCenter,
-  });
-  rows.push({
-    EmployeeID: t.hand.id, Employee: t.hand.name, WorkDate: "2026-07-20",
-    EarningCode: "BONUS", Hours: "", Rate: "",
-    Amount: t.multiDayBonus, CostCenter: t.costCenter,
-  });
-  const gross = rows.reduce((s, r) => s + (Number(r.Amount) || 0), 0);
-  return { rows, gross };
+  }> = [
+    {
+      EmployeeID: empIdFromName(name), Employee: name, WorkDate: "2026-07-20",
+      EarningCode: "BONUS", Hours: "", Rate: "",
+      Amount: bonus, CostCenter: costCenterFor(t),
+    },
+  ];
+  return { rows, gross: bonus };
 }
 
 // Serialize export rows to CSV text (raw, finance-ready values — no $ formatting).

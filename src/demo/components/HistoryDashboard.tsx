@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Ticket, TicketStatus } from "../types";
+import { computeBonus } from "../lib/exports";
 import { 
   Plus, 
   Search, 
@@ -18,7 +19,8 @@ import {
   ShieldCheck,
   Clock,
   DollarSign,
-  ArrowRight
+  ArrowRight,
+  Pencil
 } from "lucide-react";
 
 interface HistoryDashboardProps {
@@ -29,6 +31,7 @@ interface HistoryDashboardProps {
   activeRole?: string;
   onApproveTicket?: (ticketId: string) => void;
   onRejectTicket?: (ticketId: string, notes: string) => void;
+  onEditTicket?: (ticket: Ticket) => void;
 }
 
 export default function HistoryDashboard({
@@ -38,7 +41,8 @@ export default function HistoryDashboard({
   onResetDatabase,
   activeRole = "hand",
   onApproveTicket,
-  onRejectTicket
+  onRejectTicket,
+  onEditTicket
 }: HistoryDashboardProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("All");
@@ -114,7 +118,7 @@ export default function HistoryDashboard({
           </div>
 
           <p className="text-[11px] text-zinc-400 leading-relaxed mb-4 font-normal">
-            Tickets trigger automated backend billing release logic upon Supervisor endorsement, tracking accounts receivable and direct deposit tickets instantly.
+            Tickets trigger automated backend billing release upon Supervisor endorsement, tracking accounts receivable and field-employee bonus payouts instantly.
           </p>
 
           {/* BENTO STAT BLOCKS */}
@@ -122,7 +126,7 @@ export default function HistoryDashboard({
             {/* APPROVED REALIZED PAYROLL */}
             <div className="bg-zinc-950 p-3 rounded-xl border border-zinc-800 flex flex-col justify-between">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider">Estimated Next Check</span>
+                <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider">Approved Bonus</span>
                 <span className="w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]" />
               </div>
               <div className="mt-2.5">
@@ -135,7 +139,7 @@ export default function HistoryDashboard({
             {/* PENDING EXPOSURE */}
             <div className="bg-zinc-950 p-3 rounded-xl border border-zinc-800 flex flex-col justify-between">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider">Pending Earnings</span>
+                <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider">Pending Bonus</span>
                 <span className="w-1.5 h-1.5 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.6)]" />
               </div>
               <div className="mt-2.5">
@@ -233,7 +237,7 @@ export default function HistoryDashboard({
               <div className="flex flex-col gap-0.5">
                 <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider">Active Group Crew</span>
                 <span className="text-xl font-mono text-zinc-350 font-bold">
-                  {allEmployees.length} Hands
+                  {allEmployees.length} Employees
                 </span>
               </div>
               <span className="p-2 bg-zinc-850 text-zinc-400 rounded-lg">
@@ -273,7 +277,8 @@ export default function HistoryDashboard({
                   return (
                     <div
                       key={ticket.id}
-                      className="border border-zinc-800 bg-zinc-900/40 rounded-xl p-3.5 hover:border-zinc-700 transition animate-fadeIn"
+                      onClick={() => onSelectTicket(ticket)}
+                      className="border border-zinc-800 bg-zinc-900/40 rounded-xl p-3.5 hover:border-zinc-700 hover:bg-zinc-900/70 transition animate-fadeIn cursor-pointer"
                     >
                       {/* Ticket Header */}
                       <div className="flex items-start justify-between flex-wrap gap-2 mb-2 border-b border-zinc-850/40 pb-2">
@@ -330,15 +335,16 @@ export default function HistoryDashboard({
                       {/* Ticket Footer & Actions */}
                       <div className="flex items-center justify-between flex-wrap gap-2 text-[10px] text-zinc-500 font-mono mt-2.5 border-t border-zinc-850/40 pt-2.5">
                         <div className="flex items-center gap-3">
-                          <span>Hand: <strong className="text-zinc-300">{ticket.fieldHandName || "Cody Rogers"}</strong></span>
+                          <span>Employee: <strong className="text-zinc-300">{ticket.fieldHandName || "Cody Rogers"}</strong></span>
                           <span>Logged: <strong>{new Date(ticket.createdAt).toLocaleDateString()}</strong></span>
                         </div>
 
-                        <div className="flex items-center gap-2 flex-wrap">
+                        <div className="flex items-center gap-2 flex-wrap" onClick={(e) => e.stopPropagation()}>
                           {onRejectTicket && (
                             <button
                               id={`quick-reject-btn-${ticket.id}`}
-                              onClick={() => {
+                              onClick={(e) => {
+                                e.stopPropagation();
                                 setRejectionInputVisible(prev => ({ ...prev, [ticket.id]: !prev[ticket.id] }));
                               }}
                               className="px-2.5 py-1.5 text-[9px] font-bold text-rose-400 border border-rose-500/20 hover:border-rose-500/40 bg-rose-500/5 hover:bg-rose-500/10 rounded-lg transition uppercase tracking-wider cursor-pointer flex items-center gap-1"
@@ -346,10 +352,25 @@ export default function HistoryDashboard({
                               <XCircle size={12} /> Reject
                             </button>
                           )}
+                          {onEditTicket && (
+                            <button
+                              id={`quick-edit-btn-${ticket.id}`}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                onEditTicket(ticket);
+                              }}
+                              className="px-2.5 py-1.5 text-[9px] font-bold text-blue-400 border border-blue-500/20 hover:border-blue-500/40 bg-blue-500/5 hover:bg-blue-500/10 rounded-lg transition uppercase tracking-wider cursor-pointer flex items-center gap-1"
+                            >
+                              <Pencil size={12} /> Edit
+                            </button>
+                          )}
                           {onApproveTicket && (
                             <button
                               id={`quick-approve-btn-${ticket.id}`}
-                              onClick={() => onApproveTicket(ticket.id)}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                onApproveTicket(ticket.id);
+                              }}
                               className="px-3 py-1.5 text-[9px] font-extrabold text-black bg-green-400 hover:bg-green-300 rounded-lg transition uppercase tracking-wider cursor-pointer flex items-center gap-1 shadow shadow-green-500/20"
                             >
                               <CheckCircle2 size={12} /> Approve &amp; Settle
@@ -360,7 +381,7 @@ export default function HistoryDashboard({
 
                       {/* Rejection comments expansion inline form */}
                       {rejectionInputVisible[ticket.id] && (
-                        <div className="mt-3 p-3 bg-zinc-950 border border-rose-900/30 rounded-lg flex flex-col gap-2">
+                        <div className="mt-3 p-3 bg-zinc-950 border border-rose-900/30 rounded-lg flex flex-col gap-2" onClick={(e) => e.stopPropagation()}>
                           <label className="text-[8px] uppercase tracking-wider font-extrabold text-zinc-400 font-mono">
                             Required Correction Notes / Rejection Reason:
                           </label>
@@ -408,7 +429,7 @@ export default function HistoryDashboard({
             <div className="flex items-center gap-1.5 border-b border-zinc-850/60 pb-2 mb-2.5">
               <Users size={14} className="text-amber-500" />
               <span className="text-[11px] font-bold text-zinc-400 uppercase tracking-widest font-mono">
-                Crew Hand Directory (Group Tickets)
+                Employee Directory (Group Tickets)
               </span>
             </div>
             <p className="text-[10px] text-zinc-450 leading-normal mb-3 font-mono">
@@ -552,14 +573,14 @@ export default function HistoryDashboard({
           {/* Employee Filter Select (only for supervisor view) */}
           {activeRole === "supervisor" && (
             <div className="bg-zinc-900 border border-zinc-805 px-3 py-1.5 rounded-xl flex items-center gap-1.5 text-xs text-zinc-300">
-              <span className="text-[10px] font-bold text-zinc-500 uppercase font-mono">Crew Hand:</span>
+              <span className="text-[10px] font-bold text-zinc-500 uppercase font-mono">Employee:</span>
               <select
                 id="employee-filter-select"
                 value={employeeFilter}
                 onChange={(e) => setEmployeeFilter(e.target.value)}
                 className="bg-zinc-950 border border-zinc-800 rounded-lg text-zinc-200 py-0.5 px-2 focus:outline-none focus:border-amber-500 cursor-pointer text-xs"
               >
-                <option value="All">All Hands ({allEmployees.length})</option>
+                <option value="All">All Employees ({allEmployees.length})</option>
                 {allEmployees.map((emp) => (
                   <option key={emp} value={emp}>
                     {emp}
@@ -672,14 +693,16 @@ export default function HistoryDashboard({
                     </div>
                   </div>
 
-                    {/* Financial Right-column sum */}
+                    {/* Financial Right-column sum. Client billing value is decoupled from the field-hand view. */}
                     <div className="flex items-center justify-between md:flex-col md:items-end justify-center gap-1 border-t border-zinc-850 md:border-none pt-2.5 md:pt-0">
-                      <div className="md:text-right">
-                        <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider block">Aggregate Value</span>
-                        <span className="text-base font-bold font-mono text-white group-hover:text-amber-400 transition-colors">
-                          ${ticketSum.toLocaleString(undefined, {minimumFractionDigits: 2})}
-                        </span>
-                      </div>
+                      {activeRole !== "hand" && (
+                        <div className="md:text-right">
+                          <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider block">Aggregate Value</span>
+                          <span className="text-base font-bold font-mono text-white group-hover:text-amber-400 transition-colors">
+                            ${ticketSum.toLocaleString(undefined, {minimumFractionDigits: 2})}
+                          </span>
+                        </div>
+                      )}
 
                       {/* Role-specific status or payroll indicator */}
                       {activeRole === "supervisor" ? (
@@ -703,11 +726,11 @@ export default function HistoryDashboard({
                       ) : (
                         ticket.status === "Approved" ? (
                           <span className="text-[10px] bg-green-950/20 text-green-450 border border-green-900/30 px-2 py-0.5 rounded italic font-mono md:mt-2">
-                            +${ticket.payrollAmount?.toFixed(2)} Ticket Dispatched
+                            +${ticket.payrollAmount?.toFixed(2)} Bonus Earned
                           </span>
                         ) : (
                           <span className="text-[9px] text-zinc-450 bg-zinc-950 px-2 py-0.5 border border-zinc-800 rounded font-mono italic md:mt-2">
-                            Est. Wages: ${(ticket.hoursWorked * 35.0 + ticketSum * 0.05).toFixed(2)}
+                            Est. Bonus: ${computeBonus(ticket).bonus.toFixed(2)}
                           </span>
                         )
                       )}

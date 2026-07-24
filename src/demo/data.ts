@@ -323,7 +323,7 @@ export const INITIAL_TICKETS: Ticket[] = [
     ],
     signatureData: "MOCK_SIGNATURE_CHEVRON_VANCE_DATE_5_25",
     approvedAt: "2026-05-25T18:30:00Z",
-    payrollAmount: 450.00,
+    payrollAmount: 102.10, // bonus only: 5% of $2,042 bonus-eligible revenue
     billingAmount: 2042.00,
     fieldHandName: "Cody Rogers"
   },
@@ -380,7 +380,8 @@ export const INITIAL_TICKETS: Ticket[] = [
         unitRate: 98.0,
         unitMeasure: "gal",
         quantity: 15,
-        total: 1470.0
+        total: 1470.0,
+        isThirdParty: true
       }
     ],
     signatureData: "MOCK_SIGNATURE_OXY_MERCER_DATE_5_28",

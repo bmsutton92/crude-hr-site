@@ -6,6 +6,7 @@ import TicketForm from "./components/TicketForm";
 import TicketDetailView from "./components/TicketDetailView";
 import PriceBookView from "./components/PriceBookView";
 import ExportGrids from "./components/ExportGrids";
+import { computeBonus } from "./lib/exports";
 
 import { 
   Building2, 
@@ -138,13 +139,15 @@ export default function App() {
     if (!target) return;
 
     const aggregateTotal = target.lineItems.reduce((sum, item) => sum + item.total, 0);
-    const wagePortion = parseFloat((target.hoursWorked * 35.0 + aggregateTotal * 0.05).toFixed(2));
+    // The employee's only earning from a ticket is the bonus (5% of eligible revenue);
+    // hours bill the client. Same math as the bonus audit + Paylocity export.
+    const bonusPay = computeBonus(target).bonus;
 
     const approvedTicket: Ticket = {
       ...target,
       status: "Approved",
       approvedAt: new Date().toISOString(),
-      payrollAmount: wagePortion,
+      payrollAmount: bonusPay,
       billingAmount: aggregateTotal
     };
 
@@ -163,7 +166,7 @@ export default function App() {
 
     setTimeout(() => {
       appendSystemLog(
-        `TICKET LEDGER RELEASE Dispatched: Field Hand ticket credit processed [Earned Wages: $${wagePortion.toFixed(2)}]. Live tracking ledger balanced.`,
+        `BONUS LEDGER RELEASE Dispatched: Field Employee bonus processed [Bonus Pay: $${bonusPay.toFixed(2)}]. Live tracking ledger balanced.`,
         "success"
       );
     }, 1200);
@@ -250,7 +253,7 @@ export default function App() {
             </span>
             <div className="flex flex-wrap gap-1 bg-zinc-900 p-0.5 rounded-lg border border-zinc-800/80">
               {[
-                { id: "hand", label: "Field Hand (Job log)", note: "Drafts digital tickets" },
+                { id: "hand", label: "Field Employee (Job log)", note: "Drafts digital tickets" },
                 { id: "supervisor", label: "Supervisor Gate", note: "Approves / Rejects" }
               ].map((role) => (
                 <button
@@ -289,7 +292,7 @@ export default function App() {
             <Info size={14} className="text-amber-500 flex-shrink-0" />
             {activeRole === "hand" && (
               <span>
-                <strong>Field Hand Dashboard:</strong> Create digital tickets, verify Safety, capture GPS, map contract rates from <strong>Table1 Pricing chips</strong>, and have the Co. Man review &amp; digitally sign off on your phone right here before submission.
+                <strong>Field Employee Dashboard:</strong> Log operational units, verify Safety, capture GPS, and have the Co. Man review &amp; digitally sign off on your phone right here before submission. Contract pricing is applied later at the supervisor gate — never shown on-site.
               </span>
             )}
             {activeRole === "supervisor" && (
@@ -331,7 +334,7 @@ export default function App() {
                     id="toggle-fieldhand-mode"
                     onClick={() => {
                       setActiveRole("hand");
-                      appendSystemLog("Switched Active View to Field Hand dashboard", "info");
+                      appendSystemLog("Switched Active View to Field Employee dashboard", "info");
                     }}
                     className={`px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition cursor-pointer ${
                       activeRole === "hand"
@@ -339,7 +342,7 @@ export default function App() {
                         : "text-zinc-500 hover:text-zinc-350"
                     }`}
                   >
-                    Field Hand
+                    Field Employee
                   </button>
                   <button
                     id="toggle-supervisor-mode"
@@ -408,6 +411,7 @@ export default function App() {
                 {isEditing ? (
                   <TicketForm
                     initialTicket={selectedTicket}
+                    activeRole={activeRole}
                     onSaveDraft={handleSaveDraft}
                     onSubmitForReview={handleSubmitForReview}
                     onCancel={() => {
@@ -447,6 +451,7 @@ export default function App() {
                     onResetDatabase={handleResetDatabase}
                     onApproveTicket={handleApproveTicket}
                     onRejectTicket={handleRejectTicket}
+                    onEditTicket={handleEditDraftTicket}
                   />
                 )}
                 
@@ -454,8 +459,9 @@ export default function App() {
             </div>
           </section>
 
-          {/* LIVE EXPORT GRIDS: the approved ticket parsed into finance-ready rows */}
-          <ExportGrids ticket={exportTicket} />
+          {/* LIVE EXPORT GRIDS: the approved ticket parsed into finance-ready rows.
+              Back-office view only — never shown to the field employee. */}
+          {activeRole === "supervisor" && <ExportGrids ticket={exportTicket} />}
 
         </div>
       </main>

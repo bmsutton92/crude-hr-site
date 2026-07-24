@@ -58,7 +58,7 @@ export default function PriceBookView() {
       {/* Contract audit compliance status */}
       <div className="bg-zinc-950 border border-zinc-800 p-2.5 rounded-lg flex items-center gap-2 text-[10px] text-zinc-450 leading-relaxed font-mono">
         <BadgeInfo size={14} className="text-amber-500 flex-shrink-0" />
-        <span>Price Book fully synchronized with API. Field hand calculations are strictly locked.</span>
+        <span>Price Book fully synchronized with API. Field employee calculations are strictly locked.</span>
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { ArrowRight, Table2, Download, ChevronDown } from "lucide-react";
 import { Ticket } from "../types";
 import { ticketToExportInput, toNetSuite, toPaylocity, rowsToCsv } from "../lib/exports";
@@ -161,7 +161,7 @@ export default function ExportGrids({ ticket }: { ticket: Ticket | null }) {
   const data = useMemo(() => {
     if (!ticket) return null;
     const input = ticketToExportInput(ticket);
-    return { netsuite: toNetSuite(input), paylocity: toPaylocity(input), id: input.id };
+    return { netsuite: toNetSuite(input), paylocity: toPaylocity(ticket), id: input.id };
   }, [ticket]);
 
   const totalRows = data ? data.netsuite.rows.length + data.paylocity.rows.length : 0;
@@ -188,7 +188,7 @@ export default function ExportGrids({ ticket }: { ticket: Ticket | null }) {
 
   if (!data) return null;
 
-  const submitEmail = async (e: React.FormEvent) => {
+  const submitEmail = async (e: FormEvent) => {
     e.preventDefault();
     if (!email.trim() || emailStatus === "sending") return;
     setEmailStatus("sending");
@@ -257,7 +257,7 @@ export default function ExportGrids({ ticket }: { ticket: Ticket | null }) {
             systemOptions={PAYROLL_SYSTEMS}
             onSystemChange={setPayrollSystem}
             rows={data.paylocity.rows as Array<Record<string, unknown>>}
-            totalLabel="Gross Pay"
+            totalLabel="Bonus Pay"
             total={data.paylocity.gross}
             ticketId={data.id}
             startIndex={data.netsuite.rows.length}

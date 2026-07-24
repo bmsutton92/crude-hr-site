@@ -35,7 +35,7 @@ const PRESET_BHA_TOOLS = [
   { name: "Float Sub (Float Valve)", od: 6.25, idInner: 2.25, length: 2.5 }
 ];
 
-const JOB_TYPES_BY_SERVICE_LINE: Record<ServiceLine, Array<{ id: string; name: string; category: "material" | "equipment"; unitRate: number; unitMeasure: string }>> = {
+const JOB_TYPES_BY_SERVICE_LINE: Record<ServiceLine, Array<{ id: string; name: string; category: "material" | "equipment" | "labor"; unitRate: number; unitMeasure: string }>> = {
   [ServiceLine.Wireline]: [
     { id: "jt-wl-01", name: "Casing Perforating Run", category: "material", unitRate: 2500.00, unitMeasure: "run" },
     { id: "jt-wl-02", name: "Radial Cement Bond Log", category: "equipment", unitRate: 1800.00, unitMeasure: "run" },
@@ -52,7 +52,7 @@ const JOB_TYPES_BY_SERVICE_LINE: Record<ServiceLine, Array<{ id: string; name: s
     { id: "jt-cem-03", name: "Remedial Squeeze Cement", category: "equipment", unitRate: 2400.00, unitMeasure: "run" }
   ],
   [ServiceLine.StimulationPumping]: [
-    { id: "jt-stim-01", name: "John Smith (Operator)", category: "equipment", unitRate: 1480.00, unitMeasure: "day" },
+    { id: "jt-stim-01", name: "Cody Rogers (Operator)", category: "labor", unitRate: 1480.00, unitMeasure: "day" },
     { id: "jt-stim-02", name: "Mileage (Longview & Back)", category: "equipment", unitRate: 230.85, unitMeasure: "day" },
     { id: "jt-stim-03", name: "Air foam unit (Unit #1)", category: "equipment", unitRate: 2500.00, unitMeasure: "day" },
     { id: "jt-stim-04", name: "Soap @ 45. per gallon (chem)", category: "material", unitRate: 45.00, unitMeasure: "gal" },
@@ -84,17 +84,20 @@ const JOB_TYPES_BY_SERVICE_LINE: Record<ServiceLine, Array<{ id: string; name: s
 
 interface TicketFormProps {
   initialTicket?: Ticket | null;
+  activeRole?: string;
   onSaveDraft: (ticket: Ticket) => void;
   onSubmitForReview: (ticket: Ticket) => void;
   onCancel: () => void;
 }
 
-export default function TicketForm({ 
-  initialTicket, 
-  onSaveDraft, 
-  onSubmitForReview, 
-  onCancel 
+export default function TicketForm({
+  initialTicket,
+  activeRole = "hand",
+  onSaveDraft,
+  onSubmitForReview,
+  onCancel
 }: TicketFormProps) {
+  const isSupervisor = activeRole === "supervisor";
   // 1. Job Metadata
   const [ticketNumber, setTicketNumber] = useState("");
   const [selectedServiceLine, setSelectedServiceLine] = useState<ServiceLine>(ServiceLine.Wireline);
@@ -229,13 +232,16 @@ export default function TicketForm({
     setTailgateVerified(true);
     setClientRepresentative("Johnathan Mercer");
     
-    // 7 line items precisely matching the physical ticket image
+    // 7 line items precisely matching the physical ticket image.
+    // Bonus-eligible company revenue = Operator ($11,840) + Air foam unit ($15,000) = $26,840.
+    // Pass-through (non-bonus) = Mileage + chemicals + fuel + trucking = $15,981.80.
+    // Together they total the $42,821.80 ticket.
     const attachedItems: LineItem[] = [
       {
         id: `attached-li-1`,
         priceBookItemId: "jt-stim-01",
-        name: "John Smith (Operator)",
-        category: "equipment",
+        name: `${fieldHandName} (Operator)`,
+        category: "labor",
         unitRate: 1480.00,
         unitMeasure: "day",
         quantity: 8.00,
@@ -249,7 +255,8 @@ export default function TicketForm({
         unitRate: 230.85,
         unitMeasure: "day",
         quantity: 8.00,
-        total: 1846.80
+        total: 1846.80,
+        isThirdParty: true
       },
       {
         id: `attached-li-3`,
@@ -269,7 +276,8 @@ export default function TicketForm({
         unitRate: 45.00,
         unitMeasure: "gal",
         quantity: 75.00,
-        total: 3375.00
+        total: 3375.00,
+        isThirdParty: true
       },
       {
         id: `attached-li-5`,
@@ -279,7 +287,8 @@ export default function TicketForm({
         unitRate: 35.00,
         unitMeasure: "gal",
         quantity: 50.00,
-        total: 1750.00
+        total: 1750.00,
+        isThirdParty: true
       },
       {
         id: `attached-li-6`,
@@ -289,7 +298,8 @@ export default function TicketForm({
         unitRate: 5.50,
         unitMeasure: "gal",
         quantity: 1420.00,
-        total: 7810.00
+        total: 7810.00,
+        isThirdParty: true
       },
       {
         id: `attached-li-7`,
@@ -299,7 +309,8 @@ export default function TicketForm({
         unitRate: 600.00,
         unitMeasure: "trip",
         quantity: 2.00,
-        total: 1200.00
+        total: 1200.00,
+        isThirdParty: true
       }
     ];
     setLineItems(attachedItems);
@@ -399,10 +410,9 @@ export default function TicketForm({
       .filter((item) => !item.isThirdParty)
       .reduce((acc, item) => acc + item.total, 0);
 
-    const basePay = hoursWorked * 35.0;
-    const itemBonus = activeSubtotal * 0.05; // 5% bonus only on non-third-party items
-    const ongoingBonus = isOngoing ? ((runningDaysTally || 1) * 150.0) : 0; // $150.00/day ongoing bonus
-    const payrollAmt = basePay + itemBonus + ongoingBonus;
+    // The employee earns the bonus only (5% of bonus-eligible revenue); the ticket
+    // hours bill the client, they are not employee pay.
+    const bonusPay = activeSubtotal * 0.05;
 
     return {
       id: initialTicket?.id || `tkt-${Date.now()}`,
@@ -424,7 +434,7 @@ export default function TicketForm({
       routeFrom: routeFrom.trim(),
       routeTo: routeTo.trim(),
       approvedAt: status === "Approved" ? new Date().toISOString() : undefined,
-      payrollAmount: parseFloat(payrollAmt.toFixed(2)),
+      payrollAmount: parseFloat(bonusPay.toFixed(2)),
       billingAmount: parseFloat(financialSubtotal.toFixed(2)),
       isOngoing,
       runningDaysTally: isOngoing ? runningDaysTally : undefined,
@@ -516,7 +526,7 @@ export default function TicketForm({
             title="Import exact operator, mileage, chemical, air foam unit pricing items from the physical ticket attachment"
           >
             <Zap size={11} className="animate-pulse text-amber-400" />
-            LOAD AIR FOAM FIELD TICKET TEMPLATE ($42,821.80)
+            LOAD AIR FOAM FIELD TICKET TEMPLATE
           </button>
         </div>
 
@@ -602,7 +612,7 @@ export default function TicketForm({
               </select>
             </div>
             <div className="flex flex-col gap-1">
-              <label className="text-[10px] uppercase tracking-wider font-bold text-zinc-500">Field Hand / Direct Report</label>
+              <label className="text-[10px] uppercase tracking-wider font-bold text-zinc-500">Field Employee / Direct Report</label>
               <div className="relative">
                 <input
                   id="input-field-hand"
@@ -644,7 +654,7 @@ export default function TicketForm({
                     <span>Tally Current Status:</span>
                     <span className="text-amber-500 font-bold">1 Active Day Tally</span>
                     <span className="text-[9px] bg-amber-500/10 text-amber-500 px-1 py-0.5 rounded border border-amber-500/20">
-                      +$150 Bonus
+                      Multi-Day Tally
                     </span>
                   </div>
 
@@ -802,15 +812,15 @@ export default function TicketForm({
             >
               <div className="flex flex-col gap-1.5">
                 <span className={`text-[8px] uppercase tracking-wider font-mono font-bold px-1.5 py-0.5 rounded border self-start ${
-                  item.category === "equipment" ? "bg-amber-500/10 text-amber-500 border-amber-500/20" : "bg-zinc-800 text-zinc-400 border-zinc-750"
+                  item.category === "equipment" ? "bg-amber-500/10 text-amber-500 border-amber-500/20" : item.category === "labor" ? "bg-blue-500/10 text-blue-400 border-blue-500/20" : "bg-zinc-800 text-zinc-400 border-zinc-750"
                 }`}>
                   {item.category}
                 </span>
                 <span className="text-xs font-bold text-zinc-200 group-hover:text-amber-400 transition-colors leading-snug">{item.name}</span>
               </div>
               <div className="flex items-center justify-between border-t border-zinc-800/60 pt-2 text-[10px] font-mono mt-1">
-                <span className="text-zinc-500">Rate:</span>
-                <span className="text-amber-500 font-bold">${item.unitRate.toLocaleString()}/{item.unitMeasure}</span>
+                <span className="text-zinc-500">Logs in:</span>
+                <span className="text-zinc-300 font-bold uppercase tracking-wider">{item.unitMeasure}</span>
               </div>
             </button>
           ))}
@@ -834,7 +844,7 @@ export default function TicketForm({
                     <div className="min-w-0">
                       <div className="flex items-center flex-wrap gap-1">
                         <span className={`text-[8px] uppercase tracking-wider font-mono font-bold px-1.5 py-0.5 rounded border ${
-                          item.category === "equipment" ? "bg-amber-500/10 text-amber-500 border-amber-500/20" : "bg-zinc-800 text-zinc-400 border-zinc-750"
+                          item.category === "equipment" ? "bg-amber-500/10 text-amber-500 border-amber-500/20" : item.category === "labor" ? "bg-blue-500/10 text-blue-400 border-blue-500/20" : "bg-zinc-800 text-zinc-400 border-zinc-750"
                         }`}>
                           {item.category}
                         </span>
@@ -868,11 +878,11 @@ export default function TicketForm({
                     </label>
                   </div>
 
-                  {/* Quantity and Math split */}
+                  {/* Quantity logging only — unit rates & totals are decoupled from the field-hand view */}
                   <div className="flex items-center justify-between border-t border-zinc-950 pt-2 text-[11px] font-mono">
                     <div className="text-zinc-500 flex items-center gap-1">
-                      <span>Rate:</span>
-                      <span className="text-zinc-300 font-semibold">${item.unitRate}/{item.unitMeasure}</span>
+                      <span>Unit:</span>
+                      <span className="text-zinc-300 font-semibold uppercase tracking-wider">{item.unitMeasure}</span>
                     </div>
 
                     <div className="flex items-center gap-2">
@@ -900,11 +910,6 @@ export default function TicketForm({
                         </button>
                       </div>
                     </div>
-
-                    <div className="text-right">
-                      <span className="text-zinc-500 mr-1">Total:</span>
-                      <span className="text-amber-500 font-bold">${item.total.toLocaleString(undefined, {minimumFractionDigits: 2})}</span>
-                    </div>
                   </div>
                 </div>
               ))}
@@ -912,27 +917,27 @@ export default function TicketForm({
           )}
         </div>
 
-        {/* Real-time calculated subtotal */}
-        <div className="border border-zinc-850 pt-3 flex items-center justify-between bg-zinc-950 p-3.5 rounded-lg">
-          <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest font-mono">Real-Time Aggregated Financial Total:</span>
-          <span className="text-lg font-bold font-mono text-amber-500">
-            ${financialSubtotal.toLocaleString(undefined, {minimumFractionDigits: 2})}
+        {/* Operational log summary — contract pricing is applied downstream at the supervisor gate, not shown in the field-hand view */}
+        <div className="border border-zinc-850 flex items-center justify-between bg-zinc-950 p-3.5 rounded-lg">
+          <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest font-mono">Operational Line Items Logged:</span>
+          <span className="text-xs font-bold font-mono text-zinc-300">
+            {lineItems.length} {lineItems.length === 1 ? "entry" : "entries"} · priced at supervisor gate
           </span>
         </div>
       </div>
 
-      {/* 4. On-Site Client Sign-Off Pad */}
+      {/* 4. On-Site Client Proof-of-Work Verification */}
       <div className="bg-zinc-900 border border-zinc-805 rounded-xl p-4 flex flex-col gap-4">
         <h3 className="text-[10px] font-bold text-zinc-500 tracking-widest uppercase flex items-center gap-1.5 font-mono">
           <ShieldCheck size={13} className="text-zinc-400" />
-          4. On-Site Client Sign-Off Pad
+          4. On-Site Client Proof-of-Work Verification
         </h3>
 
         <p className="text-[11px] text-zinc-400 leading-normal">
-          The customer’s on-site representative (Company Man) must digitally review the aggregate financial amounts below and sign for job authorization.
+          Authorized representative signature acknowledges performance of logged operational services under contract.
         </p>
 
-        {/* Financial Summary card for signature verification */}
+        {/* Operational scope card for signature verification — pricing stays decoupled from the on-site view */}
         <div className="bg-zinc-950 p-3.5 rounded-lg border border-zinc-850 flex flex-col gap-1.5">
           <div className="flex items-center justify-between text-xs text-zinc-500">
             <span>Customer Brand:</span>
@@ -943,9 +948,9 @@ export default function TicketForm({
             <span className="text-zinc-300 font-bold">{wellName || "(Not Configured)"}</span>
           </div>
           <div className="flex items-center justify-between text-xs text-zinc-400 border-t border-zinc-900 pt-2.5 mt-2">
-            <span className="font-bold uppercase tracking-wider text-[9px] text-zinc-500">Financial Summary Total Due:</span>
-            <span className="text-sm font-bold font-mono text-amber-500">
-              ${financialSubtotal.toLocaleString(undefined, {minimumFractionDigits: 2})}
+            <span className="font-bold uppercase tracking-wider text-[9px] text-zinc-500">Operational Scope Logged:</span>
+            <span className="text-xs font-bold font-mono text-zinc-300">
+              {lineItems.length} {lineItems.length === 1 ? "line item" : "line items"} · {hoursWorked} hrs
             </span>
           </div>
         </div>
@@ -997,21 +1002,23 @@ export default function TicketForm({
         >
           Cancel &amp; Exit
         </button>
-        <button
-          id="draft-save-btn"
-          type="button"
-          onClick={handleSaveDraftLocal}
-          className="w-full md:flex-1 py-3 text-[10px] text-zinc-400 font-bold uppercase tracking-widest rounded bg-zinc-900 border border-zinc-800 hover:bg-zinc-805 hover:text-white transition cursor-pointer"
-        >
-          Save Ticket Draft
-        </button>
+        {!isSupervisor && (
+          <button
+            id="draft-save-btn"
+            type="button"
+            onClick={handleSaveDraftLocal}
+            className="w-full md:flex-1 py-3 text-[10px] text-zinc-400 font-bold uppercase tracking-widest rounded bg-zinc-900 border border-zinc-800 hover:bg-zinc-805 hover:text-white transition cursor-pointer"
+          >
+            Save Ticket Draft
+          </button>
+        )}
         <button
           id="workflow-submit-btn"
           type="button"
           onClick={handleFinalSubmit}
           className="w-full md:flex-1 py-3 text-[10px] text-black font-black uppercase tracking-widest rounded bg-amber-500 hover:bg-amber-400 transition flex items-center justify-center gap-1.5 shadow-lg shadow-amber-500/10 cursor-pointer"
         >
-          <ChevronRight size={13} /> Submit To Supervisor
+          <ChevronRight size={13} /> {isSupervisor ? "Save Ticket Changes" : "Submit To Supervisor"}
         </button>
       </div>
       

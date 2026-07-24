@@ -12,7 +12,7 @@ export enum ServiceLine {
 export interface PriceBookItem {
   id: string;
   name: string;
-  category: "material" | "equipment";
+  category: "material" | "equipment" | "labor";
   serviceLine: ServiceLine;
   unitRate: number;
   unitMeasure: string;
@@ -30,7 +30,7 @@ export interface LineItem {
   id: string;
   priceBookItemId: string;
   name: string;
-  category: "material" | "equipment";
+  category: "material" | "equipment" | "labor";
   unitRate: number;
   unitMeasure: string;
   quantity: number;
