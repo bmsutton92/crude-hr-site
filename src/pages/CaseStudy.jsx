@@ -300,7 +300,7 @@ export default function CaseStudy() {
             to="/contact"
             className="btn-accent inline-flex flex-none items-center gap-2 self-start rounded px-6 py-3 font-mono text-sm font-semibold uppercase tracking-widest text-white sm:self-auto"
           >
-            Book a Workflow Review <ArrowRight size={16} />
+            Book a Free 15-Minute Workflow Triage <ArrowRight size={16} />
           </Link>
         </div>
       </section>

@@ -28,14 +28,14 @@ export default function Footer() {
           <div>
             <h3 className="font-mono text-xs uppercase tracking-widest text-muted">Get Started</h3>
             <p className="mt-3 text-sm leading-relaxed text-muted">
-              Bring one manual process. I will show you where it breaks down and what to do about
-              it.
+              Bring one manual process, spreadsheet, approval chain, or field-to-office handoff. A
+              free 15-minute Workflow Triage confirms the friction point and the right next step.
             </p>
             <Link
               to="/contact"
               className="mt-4 inline-block border border-accent px-4 py-2 font-mono text-xs font-semibold uppercase tracking-widest text-accent transition-colors hover:bg-accent hover:text-white"
             >
-              Book a Workflow Review
+              Book a Free 15-Minute Workflow Triage
             </Link>
           </div>
         </div>

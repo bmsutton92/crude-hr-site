@@ -8,7 +8,7 @@ import portrait from '../assets/brittany-portrait.jpg';
 const references = [
   {
     quote:
-      'The old systems of paper were scrapped, and Brittany had the entire set of historical records — totaling tens of thousands — and the entire department converted to electronic documents within weeks.',
+      'The old systems of paper were scrapped, and Brittany had the entire set of historical records, totaling tens of thousands, and the entire department converted to electronic documents within weeks.',
     name: 'Derek S.',
     role: 'President, LATX Operations',
     context: 'Oil & gas operations',

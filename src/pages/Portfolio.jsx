@@ -16,7 +16,7 @@ export default function Portfolio() {
               The workflows I build
             </h1>
             <p className="mt-5 max-w-2xl text-lg leading-relaxed text-muted">
-              Real field problems, priced out to the dollar — and the digitized workflows that close
+              Real field problems, priced out to the dollar, and the digitized workflows that close
               the gap. Each case study breaks down where paper cost the operation and what an
               automated fix pays back.
             </p>
@@ -45,8 +45,8 @@ export default function Portfolio() {
               Try the live field ticketing demo
             </h2>
             <p className="mt-3 max-w-xl leading-relaxed text-muted">
-              A working mobile-first ticketing app — log hours, price from a live rate book, capture
-              signatures, and submit from the wellsite. The same kind of build behind these case studies.
+              A working mobile-first ticketing app: log operational units, capture GPS and signatures,
+              and submit from the wellsite. The same kind of build behind these case studies.
             </p>
           </div>
           <Link

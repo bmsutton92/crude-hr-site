@@ -11,4 +11,4 @@ A simple test: walk the process end to end and ask three questions at each step.
 
 Fix the process first when the steps themselves are in dispute, when two departments keep different versions of the same data, or when nobody can describe the workflow the same way twice. Automate first when the process is stable and understood but slow, when the pain is volume rather than confusion, and when the errors come from re-keying and handoffs rather than from bad decisions.
 
-In practice most engagements are a short version of both. Cut the steps that earn nothing, then automate the ones that remain. That is why a workflow review starts with one messy process on the table, not a software demo. The tooling question is easy once the process question is answered honestly.
+In practice most engagements are a short version of both. Cut the steps that earn nothing, then automate the ones that remain. That is why a Workflow Triage starts with one messy process on the table, not a software demo. The tooling question is easy once the process question is answered honestly.

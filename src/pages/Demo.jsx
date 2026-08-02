@@ -10,16 +10,16 @@ export default function Demo() {
           <div className="flex items-start gap-3">
             <Info size={16} className="mt-0.5 shrink-0 text-signal" />
             <p className="text-sm text-muted">
-              This is a working demo of the digital field ticketing app: create a ticket, price it
-              from the rate book, sign it, and approve it as a supervisor. Data stays in your
-              browser.
+              This is a working demo of the digital field ticketing app: log a ticket in the field,
+              capture a signature, then review, price, and approve it as a supervisor. Data stays in
+              your browser.
             </p>
           </div>
           <Link
             to="/contact"
             className="w-fit shrink-0 border border-accent px-4 py-2 font-mono text-xs font-semibold uppercase tracking-widest text-accent transition-colors hover:bg-accent hover:text-white"
           >
-            Book a Workflow Review
+            Book a Free 15-Minute Workflow Triage
           </Link>
         </div>
       </div>

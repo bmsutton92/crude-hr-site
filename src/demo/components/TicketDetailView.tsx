@@ -348,7 +348,7 @@ export default function TicketDetailView({
         <div id="supervisor-bonus-audit" className="bg-zinc-900 border border-blue-500/20 rounded-xl p-4 flex flex-col gap-3">
           <h3 className="text-[10px] font-bold uppercase tracking-widest text-blue-400 font-mono flex items-center gap-1.5">
             <FileSpreadsheet size={12} className="text-blue-400" />
-            Supervisor Audit — Bonus Pool Math
+            Supervisor Audit: Bonus Pool Math
           </h3>
           <div className="flex flex-col gap-2 font-mono text-xs">
             <div className="flex items-center justify-between">
@@ -361,7 +361,7 @@ export default function TicketDetailView({
                   <span className="text-[8px] uppercase tracking-wider bg-rose-500/10 border border-rose-500/25 px-1 py-0.5 rounded">Pass-Through</span>
                   Less Non-Bonus (3rd-Party)
                 </span>
-                <span className="font-bold">– ${passThroughTotal.toLocaleString(undefined, {minimumFractionDigits: 2})}</span>
+                <span className="font-bold">- ${passThroughTotal.toLocaleString(undefined, {minimumFractionDigits: 2})}</span>
               </div>
             )}
             <div className="flex items-center justify-between border-t border-zinc-800 pt-2 mt-0.5">
@@ -375,7 +375,7 @@ export default function TicketDetailView({
           </div>
           {passThroughTotal > 0 && (
             <p className="text-[10px] text-zinc-500 leading-normal">
-              Third-party trucking, chemicals, and fuel are billed to the customer but excluded from the field bonus pool. The automation splits the ledger before the ticket reaches the supervisor — no manual math.
+              Third-party trucking, chemicals, and fuel are billed to the customer but excluded from the field bonus pool. The automation splits the ledger before the ticket reaches the supervisor. No manual math.
             </p>
           )}
         </div>

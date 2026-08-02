@@ -38,7 +38,7 @@ export default function Nav() {
             to="/contact"
             className="btn-accent rounded px-4 py-2 font-mono text-xs font-semibold uppercase tracking-widest text-white"
           >
-            Book a Workflow Review
+            Book Free Triage
           </Link>
         </nav>
 
@@ -65,7 +65,7 @@ export default function Nav() {
               onClick={() => setOpen(false)}
               className="btn-accent mt-1 inline-block w-fit rounded px-4 py-2 font-mono text-xs font-semibold uppercase tracking-widest text-white"
             >
-              Book a Workflow Review
+              Book Free Triage
             </Link>
           </div>
         </nav>

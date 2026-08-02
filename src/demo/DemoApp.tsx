@@ -292,7 +292,7 @@ export default function App() {
             <Info size={14} className="text-amber-500 flex-shrink-0" />
             {activeRole === "hand" && (
               <span>
-                <strong>Field Employee Dashboard:</strong> Log operational units, verify Safety, capture GPS, and have the Co. Man review &amp; digitally sign off on your phone right here before submission. Contract pricing is applied later at the supervisor gate — never shown on-site.
+                <strong>Field Employee Dashboard:</strong> Log operational units, verify Safety, capture GPS, and have the Co. Man review &amp; digitally sign off on your phone right here before submission. Contract pricing is applied later at the supervisor gate, never shown on-site.
               </span>
             )}
             {activeRole === "supervisor" && (

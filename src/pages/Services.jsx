@@ -21,7 +21,7 @@ const groups = [
       {
         icon: ClipboardList,
         title: 'Digital Field Ticketing Workflows',
-        what: 'Replace paper tickets with mobile capture: rate-book pricing, GPS stamps, digital signatures, and instant submission to the office.',
+        what: 'Replace paper tickets with mobile capture: crews log the work in the field with GPS stamps and digital signatures, submitted instantly to the office and priced from your ERP at the supervisor gate.',
         outcome: 'Same-day ticket visibility and invoices that go out while the job is still fresh.',
       },
       {

@@ -8,7 +8,7 @@ export const SITE = {
   founder: 'Brittany Sutton',
   defaultTitle: 'Crude HR | Texas Field Operations & Workflow Automation',
   defaultDescription:
-    'Crude HR helps Texas and Gulf Coast oilfield, industrial, transportation, and manufacturing businesses replace manual back-office processes with practical automation, custom apps, and fractional HR support. Book a workflow review.',
+    'Crude HR helps Texas and Gulf Coast oilfield, industrial, transportation, and manufacturing businesses replace manual back-office processes with practical automation, custom apps, and fractional HR support. Book a free 15-minute Workflow Triage.',
   ogImage: 'https://crudehr.com/og-default.png',
   areaServed: ['Texas', 'Gulf Coast', 'Permian Basin', 'United States'],
 };
@@ -62,39 +62,39 @@ function graph(nodes) {
 const routes = {
   '/': { title: SITE.defaultTitle, description: SITE.defaultDescription },
   '/services': {
-    title: 'Services — Workflow Automation, Custom Apps & Fractional HR | Crude HR',
+    title: 'Services: Workflow Automation, Custom Apps & Fractional HR | Crude HR',
     description:
       'Workflow automation, custom internal app builds, digital field ticketing, approval routing, and fractional HR support for Texas and Gulf Coast oilfield, industrial, and field-service businesses.',
   },
   '/portfolio': {
-    title: 'Portfolio — Field-Service Workflow Builds | Crude HR',
+    title: 'Portfolio: Field-Service Workflow Builds | Crude HR',
     description:
       'Example automation and custom-app builds for field-heavy Texas and Gulf Coast businesses: digital field ticketing, bonus and payroll approval routing, onboarding automation, and HR operations cleanup.',
   },
   '/blog': {
-    title: 'Blog — Straight Talk on Process & Automation | Crude HR',
+    title: 'Blog: Straight Talk on Process & Automation | Crude HR',
     description:
       'Practical articles on back-office automation, oilfield payroll compliance, and cutting admin work for field-service and industrial businesses across Texas and the Gulf Coast.',
   },
   '/about': {
-    title: 'About Brittany Sutton — Operator First. Consultant Second. | Crude HR',
+    title: 'About Brittany Sutton: Operator First. Consultant Second. | Crude HR',
     description:
       'Crude HR is founded and run by Brittany Sutton, an HR and operations leader with 15+ years inside Texas and Gulf Coast oilfield services, transportation, and manufacturing.',
   },
   '/contact': {
-    title: 'Book a Free Workflow Review | Crude HR',
+    title: 'Book a Free 15-Minute Workflow Triage | Crude HR',
     description:
-      'Bring one manual process and get a free 30-minute workflow review for your Texas or Gulf Coast field-service, oilfield, or industrial business. No slide deck, no discovery questionnaire.',
+      'Bring one manual process and start with a free 15-minute Workflow Triage for your Texas or Gulf Coast field-service, oilfield, or industrial business. No slide deck, no discovery questionnaire.',
   },
   '/pricing': {
-    title: 'Pricing — Automation, Custom Apps & Fractional HR | Crude HR',
+    title: 'Pricing: Automation, Custom Apps & Fractional HR | Crude HR',
     description:
       'Indicative pricing and engagement models for workflow automation, custom app builds, and fractional HR support for Texas and Gulf Coast field-service and oilfield businesses.',
   },
   '/demo': {
     title: 'Live Field Ticketing Demo | Crude HR',
     description:
-      'Try a working digital field-ticketing app built for oilfield and field-service crews: rate-book pricing, GPS stamps, digital signatures, and supervisor approval — a real build, not a mockup.',
+      'Try a working digital field-ticketing app built for oilfield and field-service crews: GPS stamps, digital signatures, and supervisor approval. A real build, not a mockup.',
   },
 };
 
@@ -149,7 +149,7 @@ export function getSeo(pathname) {
       const canonical = `${SITE.url}/case-studies/${study.slug}`;
       const description = study.summary || SITE.defaultDescription;
       return {
-        title: `${study.eyebrow} — Case Study | Crude HR`,
+        title: `${study.eyebrow}: Case Study | Crude HR`,
         description,
         canonical,
         ogType: 'article',
@@ -224,11 +224,11 @@ export function serializeJsonLd(data) {
 export const PRICING_FAQ = [
   {
     q: 'How much does workflow automation or a custom app build cost?',
-    a: 'Most single-workflow automation and internal-app builds fall in the low five figures, scoped as a fixed-price project rather than a per-seat license. The exact number depends on how many systems the workflow touches and whether a custom app is involved. Every engagement starts with a free workflow review so the price is tied to a defined scope, not a guess.',
+    a: 'A simple single-workflow automation starts around $2,500 and a custom app build around $6,000, with most projects landing in the low five figures depending on how many systems the workflow touches and whether a custom app is involved. Builds are fixed-price, not per-seat. Every engagement begins with a free 15-minute Workflow Triage; detailed scope and pricing come from a $1,000 founding-client Workflow Review, which is credited toward the build when you proceed within 30 days.',
   },
   {
     q: 'How does fractional HR pricing work?',
-    a: 'Fractional HR support is a monthly retainer sized to your headcount and the scope of work — compliance, onboarding, payroll process oversight, and HR operations cleanup. It is a fraction of the cost of a full-time senior HR hire, and you can scale it up or down as the business changes.',
+    a: 'Fractional HR support is a monthly retainer sized to your headcount and the scope of work: compliance, onboarding, payroll process oversight, and HR operations cleanup. It is a fraction of the cost of a full-time senior HR hire, and you can scale it up or down as the business changes.',
   },
   {
     q: 'Do you charge per user, like most field-service software?',
@@ -236,10 +236,10 @@ export const PRICING_FAQ = [
   },
   {
     q: 'Why is there no fixed price list?',
-    a: 'Field-service businesses have very different processes, systems, and levels of mess. A fixed menu would either overcharge simple jobs or underscope complex ones. The free workflow review exists so you get a real, scoped number before committing to anything.',
+    a: 'Field-service businesses have very different processes, systems, and levels of mess. A fixed menu would either overcharge simple jobs or underscope complex ones. The free Workflow Triage and the paid Workflow Review exist so you get a real, scoped number before committing to a build.',
   },
   {
     q: 'Who do you work with?',
-    a: 'Owners, CFOs, COOs, and HR or operations leaders at field-heavy Texas and Gulf Coast businesses — oilfield services, industrial contractors, transportation, and manufacturing — where the back office still runs on paper, spreadsheets, and chased-down signatures.',
+    a: 'Owners, CFOs, COOs, and HR or operations leaders at field-heavy Texas and Gulf Coast businesses (oilfield services, industrial contractors, transportation, and manufacturing) where the back office still runs on paper, spreadsheets, and chased-down signatures.',
   },
 ];

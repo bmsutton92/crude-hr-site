@@ -10,7 +10,7 @@ function encode(data) {
 
 const GREETING = {
   role: 'assistant',
-  text: "Hi — I'm the Crude HR assistant. Ask me about services, who we work with, or the live demo, and I can set up a free 30-minute workflow review with Brittany.",
+  text: "Hi, I'm the Crude HR assistant. Ask me about services, who we work with, or the live demo, and I can set up a free 15-minute Workflow Triage with Brittany.",
 };
 
 const QUICK_PROMPTS = [
@@ -97,7 +97,7 @@ export default function ChatWidget() {
         ...prev,
         {
           role: 'assistant',
-          text: `Got it, ${bookingForm.name.split(' ')[0]} — Brittany will reach out within one business day to set a time.`,
+          text: `Got it, ${bookingForm.name.split(' ')[0]}. Brittany will reach out within one business day to set a time.`,
         },
       ]);
       setShowBooking(false);
@@ -129,7 +129,7 @@ export default function ChatWidget() {
               Crude HR Assistant
             </div>
             <div className="font-mono text-[10px] uppercase tracking-widest text-muted">
-              Questions &amp; workflow review booking
+              Questions &amp; Workflow Triage booking
             </div>
           </div>
 
@@ -180,7 +180,7 @@ export default function ChatWidget() {
                 <div className="flex items-center gap-2">
                   <CalendarClock size={15} className="text-accent" />
                   <span className="font-mono text-xs font-semibold uppercase tracking-widest text-body">
-                    Book your free review
+                    Book your free triage
                   </span>
                 </div>
                 <input
@@ -226,7 +226,7 @@ export default function ChatWidget() {
                 </button>
                 {bookingStatus === 'error' && (
                   <p className="text-xs text-accent">
-                    Something went wrong — try again, or use the contact page.
+                    Something went wrong. Try again, or use the contact page.
                   </p>
                 )}
               </form>

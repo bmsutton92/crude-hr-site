@@ -143,7 +143,7 @@ function ExportTable({
         </span>
       </div>
       <div className="px-4 py-2 bg-zinc-900 text-[9px] font-mono text-zinc-500">
-        Generated from ticket {ticketId} — <span className="text-green-500 font-bold">0 fields re-keyed</span>
+        Generated from ticket {ticketId} · <span className="text-green-500 font-bold">0 fields re-keyed</span>
       </div>
     </div>
   );
@@ -196,7 +196,7 @@ export default function ExportGrids({ ticket }: { ticket: Ticket | null }) {
       await fetch("/", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: encodeForm({ "form-name": "demo-export", email, context: `Demo export — ticket ${data.id}` }),
+        body: encodeForm({ "form-name": "demo-export", email, context: `Demo export, ticket ${data.id}` }),
       });
       setEmailStatus("done");
       setEmail("");
@@ -227,11 +227,11 @@ export default function ExportGrids({ ticket }: { ticket: Ticket | null }) {
         <div className="p-4 md:p-6 flex flex-col gap-4">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <p className="text-[11px] text-zinc-400 leading-normal max-w-xl">
-              Column headers map to your systems. Swap NetSuite/Paylocity for SAP, ADP, QuickBooks —
+              Column headers map to your systems. Swap one ERP or payroll platform for another,
               same parse.
             </p>
             <span className="text-[9px] font-mono font-bold uppercase tracking-widest text-amber-500 bg-amber-500/10 border border-amber-500/25 px-2 py-1 rounded whitespace-nowrap">
-              Sample data — not a real ticket
+              Sample data, not a real ticket
             </span>
           </div>
 
@@ -270,7 +270,7 @@ export default function ExportGrids({ ticket }: { ticket: Ticket | null }) {
           {/* Optional lead capture — download works without it. Only the email is sent (Netlify Forms). */}
           {emailStatus === "done" ? (
             <p className="text-[11px] font-mono text-green-500">
-              Thanks — I'll reach out about wiring this into your systems.
+              Thanks, I'll reach out about wiring this into your systems.
             </p>
           ) : (
             <form
@@ -282,7 +282,7 @@ export default function ExportGrids({ ticket }: { ticket: Ticket | null }) {
             >
               <input type="hidden" name="form-name" value="demo-export" />
               <label htmlFor="demo-export-email" className="text-[11px] text-zinc-400 sm:mr-1">
-                Want these wired into your <span className="text-zinc-200">actual</span> systems? Optional — leave an email:
+                Want these wired into your <span className="text-zinc-200">actual</span> systems? Optional, leave an email:
               </label>
               <div className="flex gap-2">
                 <input
@@ -303,7 +303,7 @@ export default function ExportGrids({ ticket }: { ticket: Ticket | null }) {
                 </button>
               </div>
               {emailStatus === "error" && (
-                <span className="text-[10px] text-rose-400 font-mono">Couldn't send — try the contact page.</span>
+                <span className="text-[10px] text-rose-400 font-mono">Couldn't send. Try the contact page.</span>
               )}
             </form>
           )}

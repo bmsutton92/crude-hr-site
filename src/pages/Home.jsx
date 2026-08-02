@@ -40,7 +40,7 @@ const caseCards = [
     label: 'Demo build',
     title: 'Digital field ticketing',
     problem: 'Paper tickets take days to reach billing and get re-keyed by hand.',
-    approach: 'A mobile ticketing app with rate-book pricing, GPS stamps, digital sign-off, and supervisor approval.',
+    approach: 'A mobile ticketing app: crews log the work in the field with GPS stamps and digital sign-off; the supervisor reviews, prices, and approves.',
     tools: ['Custom React app', 'Power Automate'],
     payoff: 'Same-day ticket visibility, zero re-keying.',
   },
@@ -98,7 +98,7 @@ export default function Home() {
                 to="/contact"
                 className="btn-accent inline-block rounded px-8 py-3 text-center font-mono text-sm font-semibold uppercase tracking-widest text-white"
               >
-                Book a Workflow Review
+                Book a Free 15-Minute Workflow Triage
               </Link>
               <Link
                 to="/demo"
@@ -108,9 +108,10 @@ export default function Home() {
               </Link>
             </div>
             <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted">
-              Bring one manual process, spreadsheet, approval chain, or paper workflow. I'll
-              review where it breaks down, what can be simplified, and whether automation or a
-              custom app makes sense.
+              Bring one manual process, spreadsheet, approval chain, or field-to-office handoff. In
+              15 minutes, we will confirm the primary friction point, whether Crude HR is the right
+              fit, and the most sensible next step. Detailed process mapping, recommendations, and
+              implementation planning are completed through the paid Workflow Review.
             </p>
           </Reveal>
 
@@ -181,7 +182,7 @@ export default function Home() {
             </h2>
             <p className="mt-4 max-w-2xl text-muted">
               Built for oilfield, industrial, transportation, and manufacturing operations across
-              Texas, the Gulf Coast, and the Permian Basin — with the field terminology (JSAs,
+              Texas, the Gulf Coast, and the Permian Basin, with the field terminology (JSAs,
               company-man sign-off, day-rate crews) generic software leaves out.
             </p>
           </Reveal>
@@ -288,7 +289,7 @@ export default function Home() {
               See the process, the operating problem, and the proposed result
             </h2>
             <p className="mt-4 max-w-2xl text-muted">
-              Clearly labeled prototypes and anonymized professional experience—without invented
+              Clearly labeled prototypes and anonymized professional experience, without invented
               client names or performance claims.
             </p>
           </Reveal>
@@ -331,11 +332,11 @@ export default function Home() {
               <figure className="mt-8 border-l-2 border-accent pl-5">
                 <blockquote className="text-base italic leading-relaxed text-body">
                   “The old systems of paper were scrapped, and Brittany had the entire set of
-                  historical records — totaling tens of thousands — and the entire department
+                  historical records, totaling tens of thousands, and the entire department
                   converted to electronic documents within weeks.”
                 </blockquote>
                 <figcaption className="mt-3 font-mono text-xs uppercase tracking-widest text-muted">
-                  Derek S. — President, LATX Operations
+                  Derek S., President, LATX Operations
                 </figcaption>
               </figure>
               <Link
@@ -384,7 +385,11 @@ export default function Home() {
         </div>
       </section>
 
-      <CTASection heading="One process. One call. A clear answer." />
+      <CTASection
+        heading="One process. Fifteen minutes. A clear next step."
+        body="Start with a free Workflow Triage focused on one paper process, spreadsheet, approval chain, or disconnected handoff. We will identify the issue at a high level, determine whether it is worth solving, and decide whether a detailed Workflow Review makes sense."
+        buttonLabel="Book My Free 15-Minute Triage"
+      />
     </>
   );
 }
