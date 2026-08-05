@@ -8,18 +8,31 @@ import PriceBookView from "./components/PriceBookView";
 import ExportGrids from "./components/ExportGrids";
 import { computeBonus } from "./lib/exports";
 
-import { 
-  Building2, 
-  Terminal, 
+import {
+  Building2,
+  Terminal,
   Database,
   Info,
-  Workflow
+  Workflow,
+  Sun,
+  Moon
 } from "lucide-react";
 
 export default function App() {
   // Role switcher: 'hand' (Field Hand), 'supervisor' (Dan Sullivan), 'companyman' (Client Rep / Company Man)
   const [activeRole, setActiveRole] = useState<string>("hand");
   const [isSupervisorToggleVisible, setIsSupervisorToggleVisible] = useState<boolean>(true);
+
+  // Light / dark appearance for the demo app. Defaults to dark (the app's
+  // native look); persisted per-browser like the ticket data below.
+  const [theme, setTheme] = useState<"dark" | "light">(() => {
+    const saved = localStorage.getItem("crude_hr_theme");
+    return saved === "light" ? "light" : "dark";
+  });
+
+  useEffect(() => {
+    localStorage.setItem("crude_hr_theme", theme);
+  }, [theme]);
   
   // Realized state arrays loaded from LocalStorage or code initializers
   const [tickets, setTickets] = useState<Ticket[]>(() => {
@@ -201,9 +214,22 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-950 font-sans text-zinc-100 selection:bg-amber-500 selection:text-black">
+    <div className={`min-h-screen bg-zinc-950 font-sans text-zinc-100 selection:bg-amber-500 selection:text-black ${theme === "light" ? "demo-theme-light" : ""}`}>
 
       <main className="max-w-4xl mx-auto px-4 py-6">
+        {/* APPEARANCE TOGGLE */}
+        <div className="flex justify-end mb-4">
+          <button
+            onClick={() => setTheme((prev) => (prev === "dark" ? "light" : "dark"))}
+            className="flex items-center gap-2 rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-widest text-zinc-400 transition-colors hover:border-zinc-700 hover:text-zinc-200 cursor-pointer"
+            title="Toggle light / dark theme"
+            aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
+          >
+            {theme === "dark" ? <Sun size={14} /> : <Moon size={14} />}
+            {theme === "dark" ? "Light" : "Dark"}
+          </button>
+        </div>
+
         {/* RESPONSIBLE SINGLE-COLUMN WIZARD LAYOUT */}
         <div className="flex flex-col gap-6">
 
@@ -311,6 +337,7 @@ export default function App() {
                   <TicketForm
                     initialTicket={selectedTicket}
                     activeRole={activeRole}
+                    theme={theme}
                     onSaveDraft={handleSaveDraft}
                     onSubmitForReview={handleSubmitForReview}
                     onCancel={() => {

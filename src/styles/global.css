@@ -29,6 +29,42 @@ html {
   scroll-behavior: smooth;
 }
 
+/* ============================================================
+   DEMO APP — LIGHT THEME
+   The field-ticketing demo is authored entirely with Tailwind
+   zinc-scale utilities, which compile to var(--color-zinc-*).
+   Scoping a reversed zinc ramp (plus a few semantic tweaks) to
+   the demo root flips the whole app to light without touching
+   any of its markup. Dark mode is the default and needs no rules.
+   ============================================================ */
+.demo-theme-light {
+  --color-zinc-950: #f5f6f8; /* app background */
+  --color-zinc-900: #ffffff; /* primary cards / panels */
+  --color-zinc-800: #e4e7eb; /* insets + light borders */
+  --color-zinc-700: #cbd0d8; /* stronger borders */
+  --color-zinc-600: #9aa1ab;
+  --color-zinc-500: #6b7280; /* muted body text */
+  --color-zinc-400: #545b65; /* secondary text */
+  --color-zinc-300: #3a4049; /* body text */
+  --color-zinc-200: #232830; /* strong text */
+  --color-zinc-100: #14171c; /* headings / primary text */
+  --color-zinc-50: #0a0b0e;
+
+  /* Semantic accents: darken bright text shades so they stay
+     legible on light surfaces, and lighten the dark banner bases
+     so their low-opacity washes read as soft tints. */
+  --color-green-200: #166534;
+  --color-green-300: #15803d;
+  --color-green-400: #16a34a;
+  --color-green-900: #4ade80;
+  --color-green-950: #dcfce7;
+  --color-blue-400: #2563eb;
+  --color-blue-900: #60a5fa;
+  --color-blue-950: #dbeafe;
+
+  color-scheme: light;
+}
+
 body {
   @apply bg-navy text-body font-sans antialiased;
 }
