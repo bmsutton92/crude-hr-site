@@ -19,8 +19,6 @@ import {
 export default function App() {
   // Role switcher: 'hand' (Field Hand), 'supervisor' (Dan Sullivan), 'companyman' (Client Rep / Company Man)
   const [activeRole, setActiveRole] = useState<string>("hand");
-  const [logoClicks, setLogoClicks] = useState<number>(0);
-  const [showRoleSwitcher, setShowRoleSwitcher] = useState<boolean>(false);
   const [isSupervisorToggleVisible, setIsSupervisorToggleVisible] = useState<boolean>(true);
   
   // Realized state arrays loaded from LocalStorage or code initializers
@@ -204,105 +202,6 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-zinc-950 font-sans text-zinc-100 selection:bg-amber-500 selection:text-black">
-      
-      {/* ENTERPRISE TOP NAVIGATION BRAND HEADER */}
-      <header className="border-b border-zinc-805 bg-zinc-900/60 sticky top-0 z-50 backdrop-blur-md px-6 py-4 shadow-xl shadow-black/80">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
-          
-          {/* Logo brand styling from Design template */}
-          <div className="flex items-center gap-4">
-            <div 
-              onClick={() => {
-                if (logoClicks < 3) {
-                  const nextClicks = logoClicks + 1;
-                  setLogoClicks(nextClicks);
-                  if (nextClicks === 3) {
-                    setShowRoleSwitcher(true);
-                    appendSystemLog("Secret Console Enabled: Operations Role Bar Revealed!", "success");
-                  }
-                } else {
-                  const nextVis = !showRoleSwitcher;
-                  setShowRoleSwitcher(nextVis);
-                  appendSystemLog(nextVis ? "Operations Role Bar Revealed." : "Operations Role Bar Hidden.", "info");
-                }
-              }}
-              className="bg-amber-500 text-black px-2.5 py-1 font-black italic rounded text-sm tracking-tight shadow-[0_0_12px_rgba(245,158,11,0.2)] cursor-pointer select-none active:scale-95 transition-all hover:bg-amber-400"
-              title="Click 3 times to reveal role/toggle switcher bar"
-            >
-              CRUDE HR
-            </div>
-            <div className="h-4 w-px bg-zinc-700"></div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-bold tracking-tight text-zinc-300">OPERATIONS CONTROL</span>
-                <span className="text-[9px] bg-zinc-850 text-zinc-400 font-mono px-1.5 py-0.5 rounded border border-zinc-800 uppercase tracking-widest">
-                  Secure Field Ticket Workflow
-                </span>
-              </div>
-              <p className="text-[9px] text-zinc-500 font-mono uppercase tracking-wider">
-                Oilfield Workflows &amp; Automated Ledger Systems
-              </p>
-            </div>
-          </div>
-
-          {/* CONTROL PANEL: EMULATE ACTIVE WORKSPACE ROLE FOR EVALUATOR */}
-          <div className={`${showRoleSwitcher ? "flex" : "hidden"} bg-zinc-950/80 border border-zinc-800 px-3.5 py-2 rounded-2xl flex-col md:flex-row md:items-center gap-2.5 transition-all duration-300`}>
-            <span className="text-[11px] font-mono font-bold text-zinc-400 uppercase tracking-widest flex items-center gap-1.5">
-              <Workflow size={13} className="text-amber-500" />
-              Active Role:
-            </span>
-            <div className="flex flex-wrap gap-1 bg-zinc-900 p-0.5 rounded-lg border border-zinc-800/80">
-              {[
-                { id: "hand", label: "Field Employee (Job log)", note: "Drafts digital tickets" },
-                { id: "supervisor", label: "Supervisor Gate", note: "Approves / Rejects" }
-              ].map((role) => (
-                <button
-                  id={`role-toggle-${role.id}`}
-                  key={role.id}
-                  onClick={() => {
-                    setActiveRole(role.id);
-                    appendSystemLog(`Emulating interface view as ${role.label.substring(4)}`, "info");
-                  }}
-                  className={`px-3 py-1.5 rounded text-[11px] font-bold uppercase tracking-tight transition-all cursor-pointer ${
-                    activeRole === role.id
-                      ? "bg-amber-500 text-black shadow-[0_0_8px_rgba(245,158,11,0.3)] font-bold"
-                      : "text-zinc-500 hover:text-zinc-350"
-                  }`}
-                  title={role.note}
-                >
-                  {role.label.split(" ")[1]} {role.label.split(" ")[2] || ""}
-                </button>
-              ))}
-            </div>
-
-            {/* GPS ACTIVE beacon decoration */}
-            <div className="hidden xl:flex items-center gap-2 px-3 py-1.5 bg-zinc-900 rounded-lg border border-zinc-800 select-none">
-              <div className="w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)] animate-pulse"></div>
-              <span className="text-[9px] font-mono uppercase tracking-widest text-zinc-400">GPS Active</span>
-            </div>
-          </div>
-
-        </div>
-      </header>
-
-      {/* ROLE ADVISORY INFO BAR */}
-      {showRoleSwitcher && (
-        <div className="bg-zinc-900 border-b border-zinc-850 py-2.5 px-4 transition-all duration-300">
-          <div className="max-w-7xl mx-auto flex items-center gap-2 text-xs text-zinc-450 font-normal font-sans">
-            <Info size={14} className="text-amber-500 flex-shrink-0" />
-            {activeRole === "hand" && (
-              <span>
-                <strong>Field Employee Dashboard:</strong> Log operational units, verify Safety, capture GPS, and have the Co. Man review &amp; digitally sign off on your phone right here before submission. Contract pricing is applied later at the supervisor gate, never shown on-site.
-              </span>
-            )}
-            {activeRole === "supervisor" && (
-              <span>
-                <strong>Supervisor Gate Endorsement Mode:</strong> Dan Sullivan can visually analyze operational safety, tally lengths, and sign-offs to either dispatch payments to ticket accounts or reject.
-              </span>
-            )}
-          </div>
-        </div>
-      )}
 
       <main className="max-w-4xl mx-auto px-4 py-6">
         {/* RESPONSIBLE SINGLE-COLUMN WIZARD LAYOUT */}
