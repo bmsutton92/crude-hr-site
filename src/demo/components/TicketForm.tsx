@@ -85,6 +85,7 @@ const JOB_TYPES_BY_SERVICE_LINE: Record<ServiceLine, Array<{ id: string; name: s
 interface TicketFormProps {
   initialTicket?: Ticket | null;
   activeRole?: string;
+  theme?: "dark" | "light";
   onSaveDraft: (ticket: Ticket) => void;
   onSubmitForReview: (ticket: Ticket) => void;
   onCancel: () => void;
@@ -93,6 +94,7 @@ interface TicketFormProps {
 export default function TicketForm({
   initialTicket,
   activeRole = "hand",
+  theme = "dark",
   onSaveDraft,
   onSubmitForReview,
   onCancel
@@ -977,6 +979,7 @@ export default function TicketForm({
               initialValue={signatureData}
               onSave={(data) => setSignatureData(data)}
               onClear={() => setSignatureData(null)}
+              theme={theme}
             />
           </div>
         </div>

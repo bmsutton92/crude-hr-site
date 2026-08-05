@@ -5,12 +5,18 @@ interface SignaturePadProps {
   initialValue?: string | null;
   onSave: (base64Data: string) => void;
   onClear: () => void;
+  theme?: "dark" | "light";
 }
 
-export default function SignaturePad({ initialValue, onSave, onClear }: SignaturePadProps) {
+export default function SignaturePad({ initialValue, onSave, onClear, theme = "dark" }: SignaturePadProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [hasSigned, setHasSigned] = useState(false);
+
+  // Pad surface + ink follow the active theme so the signature stays
+  // high-contrast in both appearances.
+  const padBg = theme === "light" ? "#ffffff" : "#09090b";
+  const inkColor = theme === "light" ? "#1e293b" : "#f59e0b";
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -20,13 +26,13 @@ export default function SignaturePad({ initialValue, onSave, onClear }: Signatur
     if (!ctx) return;
 
     // Reset and configure context
-    ctx.strokeStyle = "#f59e0b"; // Elegant Amber
+    ctx.strokeStyle = inkColor;
     ctx.lineWidth = 3;
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
 
-    // Set background color of canvas to Zinc 950 matching the Elegant Dark scheme
-    ctx.fillStyle = "#09090b";
+    // Paint the pad surface to match the active theme
+    ctx.fillStyle = padBg;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     if (initialValue && initialValue.startsWith("data:image")) {
@@ -37,7 +43,7 @@ export default function SignaturePad({ initialValue, onSave, onClear }: Signatur
       };
       img.src = initialValue;
     }
-  }, [initialValue]);
+  }, [initialValue, theme]);
 
   const getCoordinates = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
@@ -108,7 +114,7 @@ export default function SignaturePad({ initialValue, onSave, onClear }: Signatur
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    ctx.fillStyle = "#09090b";
+    ctx.fillStyle = padBg;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     setHasSigned(false);
     onClear();
