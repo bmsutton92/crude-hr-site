@@ -10,7 +10,7 @@ import CTASection from '../components/CTASection.jsx';
 import CaseStudyCard from '../components/CaseStudyCard.jsx';
 import { posts } from '../lib/posts.js';
 import { caseStudies } from '../lib/caseStudies.js';
-import heroPortrait from '../assets/brittany-hero.jpg';
+import DemoPhones from '../components/DemoPhones.jsx';
 
 const painPoints = [
   {
@@ -116,21 +116,13 @@ export default function Home() {
           </Reveal>
 
           <Reveal delay={150} className="hidden md:block">
-            <div className="relative">
-              <div className="absolute -inset-3 -z-10 border border-accent/30" />
-              <img
-                src={heroPortrait}
-                alt="Brittany Sutton, founder of Crude HR"
-                className="w-full border border-edge shadow-2xl shadow-black/40"
-              />
-              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-navy/95 to-transparent p-4">
-                <div className="font-display text-lg font-semibold uppercase tracking-wide text-body">
-                  Brittany Sutton
-                </div>
-                <div className="font-mono text-[11px] uppercase tracking-widest text-accent">
-                  Founder / 15+ Years HR &amp; Ops / SHRM-CP
-                </div>
-              </div>
+            <DemoPhones />
+            <div className="mt-6 flex items-center justify-center gap-3">
+              <span className="h-px w-6 bg-edge" />
+              <span className="font-mono text-[11px] uppercase tracking-widest text-muted">
+                Live field-ticketing demo
+              </span>
+              <span className="h-px w-6 bg-edge" />
             </div>
           </Reveal>
         </div>
